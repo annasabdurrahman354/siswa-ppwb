@@ -89,7 +89,6 @@ export function generatePrintDocument(
         </div>
         <script language="javascript">
             window.print();
-            window.onfocus=function(){ window.close();}
         </script>
     </body>
     </html>
@@ -158,7 +157,6 @@ export function generatePrintDocument(
     </div>
     <script language="javascript">
         window.print();
-        window.onfocus=function(){ window.close();}
     </script>
     </body>
     </html>     
