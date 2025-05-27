@@ -186,7 +186,7 @@ export default function SiswaDetailPage() {
     return (
       <MainLayout>
         <div className="space-y-6">
-          <Button variant="outline" onClick={() => router.back()}><ArrowLeft className="h-4 w-4 mr-2" /> Kembali</Button>
+          <Button variant="outline" onClick={() => router.replace('/')}><ArrowLeft className="h-4 w-4 mr-2" /> Kembali</Button>
           <Card><CardContent className="p-6 text-center"><p className="text-destructive mb-4">{error || "Data siswa tidak ditemukan."}</p><Button onClick={fetchSiswaDetail}>Coba Lagi</Button></CardContent></Card>
         </div>
       </MainLayout>

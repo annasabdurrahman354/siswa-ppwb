@@ -1,25 +1,26 @@
 export interface Siswa {
-  nispn: string | null
+  nispn: string 
   nis: string | null
-  nama: string | null
-  nama_ayah: string | null
-  nama_ibu: string | null
-  tempat_lahir: string | null
-  tanggal_lahir: string | null // Format: 'dd-mm-YYYY'
-  umur: number | null
+  nama: string 
+  jenis_kelamin: string
+  nama_ayah: string
+  nama_ibu: string
+  tempat_lahir: string
+  tanggal_lahir: string
+  umur: number
   rt: string | null
   rw: string | null
   desa_kel: string | null
   kecamatan: string | null
   kota_kab: string | null
   provinsi: string | null
-  kode_pos: string | null
+  kode_pos: string
   alamat_lengkap: string
-  foto_siswa: string | null // URL to the image
-  pendidikan: string | null
-  kelompok_sambung: string | null
-  daerah_sambung: string | null
-  status_mondok: string | null
+  foto_siswa: string
+  pendidikan: string
+  kelompok_sambung: string
+  daerah_sambung: string
+  status_mondok: string
 }
 
 export interface SiswaPaginatedResponse {

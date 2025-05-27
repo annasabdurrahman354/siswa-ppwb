@@ -13,7 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast"
 import { ArrowLeft, Camera, Upload, Save, X } from "lucide-react"
 import Webcam from "react-webcam"
-import ReactCrop, { type PixelCrop } from "react-image-crop"
+import ReactCrop, { type PixelCrop, centerCrop, makeAspectCrop } from "react-image-crop"
 import imageCompression from "browser-image-compression"
 import "react-image-crop/dist/ReactCrop.css"
 
@@ -31,14 +31,16 @@ export default function UpdatePhotoPage() {
   const [selectedDevice, setSelectedDevice] = useState<string>("")
   const [capturedImage, setCapturedImage] = useState<string | null>(null)
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
-  // Enhanced crop state with better defaults for 3:4 ratio
+  
+  // Initialize crop with proper 3:4 aspect ratio
   const [crop, setCrop] = useState<{ unit: "%" | "px"; width: number; height: number; x: number; y: number }>({
     unit: "%",
-    width: 60,    // Increased default width
-    height: 80,   // Height that maintains 3:4 ratio (60 * 4/3 = 80)
-    x: 20,        // Centered horizontally
-    y: 10,        // Centered vertically
+    width: 60,
+    height: 80, // This will be recalculated when image loads
+    x: 20,
+    y: 10,
   })
+  
   const [completedCrop, setCompletedCrop] = useState<PixelCrop>()
   const [showCropper, setShowCropper] = useState(false)
   const [croppedImageUrl, setCroppedImageUrl] = useState<string | null>(null)
@@ -48,11 +50,10 @@ export default function UpdatePhotoPage() {
   const imgRef = useRef<HTMLImageElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  // Add minimum and maximum dimensions to enforce 3:4 ratio
-  const minCropWidth = 150  // Minimum width in pixels
-  const minCropHeight = 200 // Minimum height in pixels (150 * 4/3 = 200)
-  const maxCropWidth = 600  // Maximum width in pixels
-  const maxCropHeight = 800 // Maximum height in pixels (600 * 4/3 = 800)
+  const minCropWidth = 150
+  const minCropHeight = 200
+  const maxCropWidth = 600
+  const maxCropHeight = 800
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -77,6 +78,28 @@ export default function UpdatePhotoPage() {
       console.error("Error getting video devices:", error)
     }
   }
+
+  // Helper function to initialize proper 3:4 crop when image loads
+  const onImageLoad = useCallback((e: React.SyntheticEvent<HTMLImageElement>) => {
+    const { naturalWidth: width, naturalHeight: height } = e.currentTarget
+    
+    // Create a proper 3:4 aspect crop that's centered
+    const crop = centerCrop(
+      makeAspectCrop(
+        {
+          unit: '%',
+          width: 60, // Start with 60% width
+        },
+        3 / 4, // 3:4 aspect ratio
+        width,
+        height
+      ),
+      width,
+      height
+    )
+    
+    setCrop(crop)
+  }, [])
 
   const capture = useCallback(() => {
     const imageSrc = webcamRef.current?.getScreenshot()
@@ -156,9 +179,8 @@ export default function UpdatePhotoPage() {
     }
   }
 
-  // Enhanced crop change handler that enforces 3:4 ratio
+  // Use percentCrop to maintain aspect ratio properly
   const handleCropChange = (crop: any, percentCrop: any) => {
-    // Always use the percentCrop to maintain consistency
     setCrop(percentCrop)
   }
 
@@ -168,23 +190,19 @@ export default function UpdatePhotoPage() {
     try {
       setUploading(true)
 
-      // Convert cropped image URL to blob
       const response = await fetch(croppedImageUrl)
       const blob = await response.blob()
 
-      // Compress the image
       const compressedFile = await imageCompression(blob as File, {
-        maxSizeMB: 0.4, // 400KB
+        maxSizeMB: 0.4,
         maxWidthOrHeight: 800,
         useWebWorker: true,
       })
 
-      // Create form data
       const formData = new FormData()
       formData.append("nispn", nispn)
       formData.append("photo", compressedFile, "photo.jpg")
 
-      // Upload to API
       const uploadResponse = await fetch("https://tes.ppwb.my.id/api/siswa-ppwb/update-photo", {
         method: "POST",
         body: formData,
@@ -217,6 +235,14 @@ export default function UpdatePhotoPage() {
     setSelectedFile(null)
     setShowCropper(false)
     setCroppedImageUrl(null)
+    // Reset crop to initial state
+    setCrop({
+      unit: "%",
+      width: 60,
+      height: 80,
+      x: 20,
+      y: 10,
+    })
     if (fileInputRef.current) {
       fileInputRef.current.value = ""
     }
@@ -237,10 +263,10 @@ export default function UpdatePhotoPage() {
           <h2 className="text-3xl font-bold text-primary-800">Update Foto Siswa</h2>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="md:flex md:flex-row gap-6">
           {/* Current Photo */}
           {existingPhotoUrl && (
-            <Card className="border-primary-200 shadow-lg">
+            <Card className="border-primary-200 shadow-lg w-full">
               <CardHeader className="bg-gradient-to-r from-primary-50 to-primary-100">
                 <CardTitle className="text-primary-800">Foto Saat Ini</CardTitle>
               </CardHeader>
@@ -258,9 +284,9 @@ export default function UpdatePhotoPage() {
           )}
 
           {/* Photo Update Interface */}
-          <Card className="border-primary-200 shadow-lg">
+          <Card className="border-primary-200 shadow-lg w-full mt-6 md:mt-0">
             <CardHeader className="bg-gradient-to-r from-info-50 to-info-100">
-              <CardTitle className="text-info-800">Update Foto</CardTitle>
+              <CardTitle className="text-green-800">Update Foto</CardTitle>
             </CardHeader>
             <CardContent className="p-6 space-y-4">
               {!showCropper && !croppedImageUrl && (
@@ -363,12 +389,12 @@ export default function UpdatePhotoPage() {
                       crop={crop}
                       onChange={handleCropChange}
                       onComplete={(c) => setCompletedCrop(c)}
-                      aspect={3 / 4}                    // Enforce 3:4 aspect ratio
-                      minWidth={minCropWidth}           // Minimum crop width
-                      minHeight={minCropHeight}         // Minimum crop height  
-                      maxWidth={maxCropWidth}           // Maximum crop width
-                      maxHeight={maxCropHeight}         // Maximum crop height
-                      keepSelection={true}              // Prevent deselection
+                      aspect={3 / 4}
+                      minWidth={minCropWidth}
+                      minHeight={minCropHeight}
+                      maxWidth={maxCropWidth}
+                      maxHeight={maxCropHeight}
+                      keepSelection={true}
                       className="max-w-full"
                     >
                       <img
@@ -376,6 +402,7 @@ export default function UpdatePhotoPage() {
                         alt="Crop me"
                         src={capturedImage || "/placeholder.svg"}
                         className="max-w-full h-auto"
+                        onLoad={onImageLoad}
                       />
                     </ReactCrop>
                   </div>

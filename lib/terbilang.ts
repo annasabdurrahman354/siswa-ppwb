@@ -68,7 +68,15 @@ export function terbilang(n: number): string {
   return result.trim().replace(/\s+/g, " ") + " Rupiah";
 }
 
-export function formatRupiah(amount: number | null | undefined): string {
+export function formatRupiah(amount: number | null | undefined, withPrefix: boolean = true): string {
   if (amount === null || amount === undefined) return "-";
-  return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(amount);
+  
+  const formatted = new Intl.NumberFormat('id-ID', {
+    style: 'currency',
+    currency: 'IDR',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0
+  }).format(amount);
+
+  return withPrefix ? formatted : formatted.replace(/^Rp\s?/, '').trim();
 }

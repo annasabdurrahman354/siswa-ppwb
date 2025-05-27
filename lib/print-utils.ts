@@ -163,471 +163,820 @@ export function generatePrintDocument(
     return printWindow;
   }
 
-  else if (type == "stiker") {  
+  else if (type == "stiker") {
     printWindow.document.write(`
-
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+    <!-- saved from url=(0080)http://192.168.110.2/walibarokah/app/report/cetak_kartu_ujian.php?nis=0020580525 -->
+    <html xmlns="http://www.w3.org/1999/xhtml">
+      <head>
+          <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+          <title>Untitled Document</title>
+          <style type="text/css">
+            <!--
+                .style1 { font:calibri; font-size:15px}
+                .td{ font:calibri;}
+                .bgsize {
+                background-repeat:no-repeat;
+                height:50px;
+                width:50px;
+                background-position:center;
+                background-size: 87%;}
+                .bgsize2 {
+                background-repeat:no-repeat;
+                height:50px;
+                width:50px;
+                background-size: 87%;}
+                -->
+          </style>
+          <link type="text/css" rel="stylesheet" href="chrome-extension://fheoggkfdfchfphceeifdbepaooicaho/css/mcafee_fonts.css">
+      </head>
+      <body>
+          <table width="747" height="70%" border="0">
+            <tbody>
+                <tr>
+                  <td width="368" height="200">
+                      <div align="center">
+                        <table width="345" height="200" border="1" cellpadding="0" cellspacing="0">
+                            <tbody>
+                              <tr>
+                                  <td valign="top" background="${siteUrl}/print_assets/sticker.jpg" class="bgsize">
+                                    <table width="100%" border="0" cellpadding="0" cellspacing="0" class="style1">
+                                        <tbody>
+                                          <tr>
+                                              <td height="64" colspan="5"></td>
+                                          </tr>
+                                          <tr>
+                                              <td valign="top" width="17%"><strong><font face="calibri">&nbsp;NAMA </font></strong></td>
+                                              <td valign="top" width="2%"><strong>:</strong></td>
+                                              <td valign="top"> <strong><font face="calibri">${siswaData.nama}</font></strong></td>
+                                          </tr>
+                                          <tr>
+                                              <td valign="top" height="1"> <strong><font face="calibri">&nbsp;ALAMAT</font></strong></td>
+                                              <td valign="top"><strong>:</strong></td>
+                                              <td width="81%"> <strong><font face="calibri">${siswaData.alamat_lengkap}</font></strong></td>
+                                          </tr>
+                                          <tr>
+                                              <td valign="top" height="1"><strong><font face="calibri">&nbsp;KELOMPOK</font></strong></td>
+                                              <td valign="top"><strong>:</strong></td>
+                                              <td valign="top"> <strong><font face="calibri">${siswaData.kelompok_sambung}</font></strong></td>
+                                          </tr>
+                                          <tr>
+                                              <td valign="top" height="1"><strong><font face="calibri">&nbsp;DAERAH</font></strong></td>
+                                              <td><strong>:</strong></td>
+                                              <td rowspan="1" valign="top"> <strong><font face="calibri">${siswaData.daerah_sambung}</font></strong></td>
+                                          </tr>
+                                          <tr>
+                                              <td colspan="2" style="font-size:12pt;font-family:Calibri"> </td>
+                                          </tr>
+                                        </tbody>
+                                    </table>
+                                  </td>
+                              </tr>
+                            </tbody>
+                        </table>
+                      </div>
+                  </td>
+                  <td>
+                      <div align="center">
+                        <table width="345" height="200" border="1" cellpadding="0" cellspacing="0">
+                            <tbody>
+                              <tr>
+                                  <td valign="top" background="${siteUrl}/print_assets/sticker.jpg" class="bgsize" width="110%">
+                                    <table width="100%" border="0" cellpadding="0" cellspacing="0" class="style1">
+                                        <tbody>
+                                          <tr>
+                                              <td height="64" colspan="5"></td>
+                                          </tr>
+                                          <tr>
+                                              <td valign="top" width="17%"><strong><font face="calibri">&nbsp;NAMA </font></strong></td>
+                                              <td valign="top" width="2%"><strong>:</strong></td>
+                                              <td valign="top"> <strong><font face="calibri">${siswaData.nama}</font></strong></td>
+                                          </tr>
+                                          <tr>
+                                              <td valign="top" height="1"> <strong><font face="calibri">&nbsp;ALAMAT</font></strong></td>
+                                              <td valign="top"><strong>:</strong></td>
+                                              <td width="81%"> <strong><font face="calibri">${siswaData.alamat_lengkap}</font></strong></td>
+                                          </tr>
+                                          <tr>
+                                              <td valign="top" height="1"><strong><font face="calibri">&nbsp;KELOMPOK</font></strong></td>
+                                              <td valign="top"><strong>:</strong></td>
+                                              <td valign="top"> <strong><font face="calibri">${siswaData.kelompok_sambung}</font></strong></td>
+                                          </tr>
+                                          <tr>
+                                              <td valign="top" height="1"><strong><font face="calibri">&nbsp;DAERAH</font></strong></td>
+                                              <td><strong>:</strong></td>
+                                              <td rowspan="1" valign="top"> <strong><font face="calibri">${siswaData.daerah_sambung}</font></strong></td>
+                                          </tr>
+                                          <tr>
+                                              <td colspan="2" style="font-size:12pt;font-family:Calibri"> </td>
+                                          </tr>
+                                        </tbody>
+                                    </table>
+                                  </td>
+                              </tr>
+                            </tbody>
+                        </table>
+                      </div>
+                  </td>
+                </tr>
+            </tbody>
+          </table>
+          <table width="747" height="70%" border="0">
+            <tbody>
+                <tr>
+                  <td width="368" height="200">
+                      <div align="center">
+                        <table width="345" height="200" border="1" cellpadding="0" cellspacing="0">
+                            <tbody>
+                              <tr>
+                                  <td valign="top" background="${siteUrl}/print_assets/sticker.jpg" class="bgsize">
+                                    <table width="100%" border="0" cellpadding="0" cellspacing="0" class="style1">
+                                        <tbody>
+                                          <tr>
+                                              <td height="64" colspan="5"></td>
+                                          </tr>
+                                          <tr>
+                                              <td valign="top" width="17%"><strong><font face="calibri">&nbsp;NAMA </font></strong></td>
+                                              <td valign="top" width="2%"><strong>:</strong></td>
+                                              <td valign="top"> <strong><font face="calibri">${siswaData.nama}</font></strong></td>
+                                          </tr>
+                                          <tr>
+                                              <td valign="top" height="1"> <strong><font face="calibri">&nbsp;ALAMAT</font></strong></td>
+                                              <td valign="top"><strong>:</strong></td>
+                                              <td width="81%"> <strong><font face="calibri">${siswaData.alamat_lengkap}</font></strong></td>
+                                          </tr>
+                                          <tr>
+                                              <td valign="top" height="1"><strong><font face="calibri">&nbsp;KELOMPOK</font></strong></td>
+                                              <td valign="top"><strong>:</strong></td>
+                                              <td valign="top"> <strong><font face="calibri">${siswaData.kelompok_sambung}</font></strong></td>
+                                          </tr>
+                                          <tr>
+                                              <td valign="top" height="1"><strong><font face="calibri">&nbsp;DAERAH</font></strong></td>
+                                              <td><strong>:</strong></td>
+                                              <td rowspan="1" valign="top"> <strong><font face="calibri">${siswaData.daerah_sambung}</font></strong></td>
+                                          </tr>
+                                          <tr>
+                                              <td colspan="2" style="font-size:12pt;font-family:Calibri"> </td>
+                                          </tr>
+                                        </tbody>
+                                    </table>
+                                  </td>
+                              </tr>
+                            </tbody>
+                        </table>
+                      </div>
+                  </td>
+                  <td>
+                      <div align="center">
+                        <table width="345" height="200" border="1" cellpadding="0" cellspacing="0">
+                            <tbody>
+                              <tr>
+                                  <td valign="top" background="${siteUrl}/print_assets/sticker.jpg" class="bgsize" width="110%">
+                                    <table width="100%" border="0" cellpadding="0" cellspacing="0" class="style1">
+                                        <tbody>
+                                          <tr>
+                                              <td height="64" colspan="5"></td>
+                                          </tr>
+                                          <tr>
+                                              <td valign="top" width="17%"><strong><font face="calibri">&nbsp;NAMA </font></strong></td>
+                                              <td valign="top" width="2%"><strong>:</strong></td>
+                                              <td valign="top"> <strong><font face="calibri">${siswaData.nama}</font></strong></td>
+                                          </tr>
+                                          <tr>
+                                              <td valign="top" height="1"> <strong><font face="calibri">&nbsp;ALAMAT</font></strong></td>
+                                              <td valign="top"><strong>:</strong></td>
+                                              <td width="81%"> <strong><font face="calibri">${siswaData.alamat_lengkap}</font></strong></td>
+                                          </tr>
+                                          <tr>
+                                              <td valign="top" height="1"><strong><font face="calibri">&nbsp;KELOMPOK</font></strong></td>
+                                              <td valign="top"><strong>:</strong></td>
+                                              <td valign="top"> <strong><font face="calibri">${siswaData.kelompok_sambung}</font></strong></td>
+                                          </tr>
+                                          <tr>
+                                              <td valign="top" height="1"><strong><font face="calibri">&nbsp;DAERAH</font></strong></td>
+                                              <td><strong>:</strong></td>
+                                              <td rowspan="1" valign="top"> <strong><font face="calibri">${siswaData.daerah_sambung}</font></strong></td>
+                                          </tr>
+                                          <tr>
+                                              <td colspan="2" style="font-size:12pt;font-family:Calibri"> </td>
+                                          </tr>
+                                        </tbody>
+                                    </table>
+                                  </td>
+                              </tr>
+                            </tbody>
+                        </table>
+                      </div>
+                  </td>
+                </tr>
+            </tbody>
+          </table>
+          <table width="747" height="70%" border="0">
+            <tbody>
+                <tr>
+                  <td width="368" height="200">
+                      <div align="center">
+                        <table width="345" height="200" border="1" cellpadding="0" cellspacing="0">
+                            <tbody>
+                              <tr>
+                                  <td valign="top" background="${siteUrl}/print_assets/sticker.jpg" class="bgsize">
+                                    <table width="100%" border="0" cellpadding="0" cellspacing="0" class="style1">
+                                        <tbody>
+                                          <tr>
+                                              <td height="64" colspan="5"></td>
+                                          </tr>
+                                          <tr>
+                                              <td valign="top" width="17%"><strong><font face="calibri">&nbsp;NAMA </font></strong></td>
+                                              <td valign="top" width="2%"><strong>:</strong></td>
+                                              <td valign="top"> <strong><font face="calibri">${siswaData.nama}</font></strong></td>
+                                          </tr>
+                                          <tr>
+                                              <td valign="top" height="1"> <strong><font face="calibri">&nbsp;ALAMAT</font></strong></td>
+                                              <td valign="top"><strong>:</strong></td>
+                                              <td width="81%"> <strong><font face="calibri">${siswaData.alamat_lengkap}</font></strong></td>
+                                          </tr>
+                                          <tr>
+                                              <td valign="top" height="1"><strong><font face="calibri">&nbsp;KELOMPOK</font></strong></td>
+                                              <td valign="top"><strong>:</strong></td>
+                                              <td valign="top"> <strong><font face="calibri">${siswaData.kelompok_sambung}</font></strong></td>
+                                          </tr>
+                                          <tr>
+                                              <td valign="top" height="1"><strong><font face="calibri">&nbsp;DAERAH</font></strong></td>
+                                              <td><strong>:</strong></td>
+                                              <td rowspan="1" valign="top"> <strong><font face="calibri">${siswaData.daerah_sambung}</font></strong></td>
+                                          </tr>
+                                          <tr>
+                                              <td colspan="2" style="font-size:12pt;font-family:Calibri"> </td>
+                                          </tr>
+                                        </tbody>
+                                    </table>
+                                  </td>
+                              </tr>
+                            </tbody>
+                        </table>
+                      </div>
+                  </td>
+                  <td>
+                      <div align="center">
+                        <table width="345" height="200" border="1" cellpadding="0" cellspacing="0">
+                            <tbody>
+                              <tr>
+                                  <td valign="top" background="${siteUrl}/print_assets/sticker.jpg" class="bgsize" width="110%">
+                                    <table width="100%" border="0" cellpadding="0" cellspacing="0" class="style1">
+                                        <tbody>
+                                          <tr>
+                                              <td height="64" colspan="5"></td>
+                                          </tr>
+                                          <tr>
+                                              <td valign="top" width="17%"><strong><font face="calibri">&nbsp;NAMA </font></strong></td>
+                                              <td valign="top" width="2%"><strong>:</strong></td>
+                                              <td valign="top"> <strong><font face="calibri">${siswaData.nama}</font></strong></td>
+                                          </tr>
+                                          <tr>
+                                              <td valign="top" height="1"> <strong><font face="calibri">&nbsp;ALAMAT</font></strong></td>
+                                              <td valign="top"><strong>:</strong></td>
+                                              <td width="81%"> <strong><font face="calibri">${siswaData.alamat_lengkap}</font></strong></td>
+                                          </tr>
+                                          <tr>
+                                              <td valign="top" height="1"><strong><font face="calibri">&nbsp;KELOMPOK</font></strong></td>
+                                              <td valign="top"><strong>:</strong></td>
+                                              <td valign="top"> <strong><font face="calibri">${siswaData.kelompok_sambung}</font></strong></td>
+                                          </tr>
+                                          <tr>
+                                              <td valign="top" height="1"><strong><font face="calibri">&nbsp;DAERAH</font></strong></td>
+                                              <td><strong>:</strong></td>
+                                              <td rowspan="1" valign="top"> <strong><font face="calibri">${siswaData.daerah_sambung}</font></strong></td>
+                                          </tr>
+                                          <tr>
+                                              <td colspan="2" style="font-size:12pt;font-family:Calibri"> </td>
+                                          </tr>
+                                        </tbody>
+                                    </table>
+                                  </td>
+                              </tr>
+                            </tbody>
+                        </table>
+                      </div>
+                  </td>
+                </tr>
+            </tbody>
+          </table>
+          <table width="747" height="70%" border="0">
+            <tbody>
+                <tr>
+                  <td width="368" height="200">
+                      <div align="center">
+                        <table width="345" height="200" border="1" cellpadding="0" cellspacing="0">
+                            <tbody>
+                              <tr>
+                                  <td valign="top" background="${siteUrl}/print_assets/sticker.jpg" class="bgsize">
+                                    <table width="100%" border="0" cellpadding="0" cellspacing="0" class="style1">
+                                        <tbody>
+                                          <tr>
+                                              <td height="64" colspan="5"></td>
+                                          </tr>
+                                          <tr>
+                                              <td valign="top" width="17%"><strong><font face="calibri">&nbsp;NAMA </font></strong></td>
+                                              <td valign="top" width="2%"><strong>:</strong></td>
+                                              <td valign="top"> <strong><font face="calibri">${siswaData.nama}</font></strong></td>
+                                          </tr>
+                                          <tr>
+                                              <td valign="top" height="1"> <strong><font face="calibri">&nbsp;ALAMAT</font></strong></td>
+                                              <td valign="top"><strong>:</strong></td>
+                                              <td width="81%"> <strong><font face="calibri">${siswaData.alamat_lengkap}</font></strong></td>
+                                          </tr>
+                                          <tr>
+                                              <td valign="top" height="1"><strong><font face="calibri">&nbsp;KELOMPOK</font></strong></td>
+                                              <td valign="top"><strong>:</strong></td>
+                                              <td valign="top"> <strong><font face="calibri">${siswaData.kelompok_sambung}</font></strong></td>
+                                          </tr>
+                                          <tr>
+                                              <td valign="top" height="1"><strong><font face="calibri">&nbsp;DAERAH</font></strong></td>
+                                              <td><strong>:</strong></td>
+                                              <td rowspan="1" valign="top"> <strong><font face="calibri">${siswaData.daerah_sambung}</font></strong></td>
+                                          </tr>
+                                          <tr>
+                                              <td colspan="2" style="font-size:12pt;font-family:Calibri"> </td>
+                                          </tr>
+                                        </tbody>
+                                    </table>
+                                  </td>
+                              </tr>
+                            </tbody>
+                        </table>
+                      </div>
+                  </td>
+                  <td>
+                      <div align="center">
+                        <table width="345" height="200" border="1" cellpadding="0" cellspacing="0">
+                            <tbody>
+                              <tr>
+                                  <td valign="top" background="${siteUrl}/print_assets/sticker.jpg" class="bgsize" width="110%">
+                                    <table width="100%" border="0" cellpadding="0" cellspacing="0" class="style1">
+                                        <tbody>
+                                          <tr>
+                                              <td height="64" colspan="5"></td>
+                                          </tr>
+                                          <tr>
+                                              <td valign="top" width="17%"><strong><font face="calibri">&nbsp;NAMA </font></strong></td>
+                                              <td valign="top" width="2%"><strong>:</strong></td>
+                                              <td valign="top"> <strong><font face="calibri">${siswaData.nama}</font></strong></td>
+                                          </tr>
+                                          <tr>
+                                              <td valign="top" height="1"> <strong><font face="calibri">&nbsp;ALAMAT</font></strong></td>
+                                              <td valign="top"><strong>:</strong></td>
+                                              <td width="81%"> <strong><font face="calibri">${siswaData.alamat_lengkap}</font></strong></td>
+                                          </tr>
+                                          <tr>
+                                              <td valign="top" height="1"><strong><font face="calibri">&nbsp;KELOMPOK</font></strong></td>
+                                              <td valign="top"><strong>:</strong></td>
+                                              <td valign="top"> <strong><font face="calibri">${siswaData.kelompok_sambung}</font></strong></td>
+                                          </tr>
+                                          <tr>
+                                              <td valign="top" height="1"><strong><font face="calibri">&nbsp;DAERAH</font></strong></td>
+                                              <td><strong>:</strong></td>
+                                              <td rowspan="1" valign="top"> <strong><font face="calibri">${siswaData.daerah_sambung}</font></strong></td>
+                                          </tr>
+                                          <tr>
+                                              <td colspan="2" style="font-size:12pt;font-family:Calibri"> </td>
+                                          </tr>
+                                        </tbody>
+                                    </table>
+                                  </td>
+                              </tr>
+                            </tbody>
+                        </table>
+                      </div>
+                  </td>
+                </tr>
+            </tbody>
+          </table>
+          <table width="747" height="70%" border="0">
+            <tbody>
+                <tr>
+                  <td width="368" height="200">
+                      <div align="center">
+                        <table width="345" height="200" border="1" cellpadding="0" cellspacing="0">
+                            <tbody>
+                              <tr>
+                                  <td valign="top" background="${siteUrl}/print_assets/sticker.jpg" class="bgsize">
+                                    <table width="100%" border="0" cellpadding="0" cellspacing="0" class="style1">
+                                        <tbody>
+                                          <tr>
+                                              <td height="64" colspan="5"></td>
+                                          </tr>
+                                          <tr>
+                                              <td valign="top" width="17%"><strong><font face="calibri">&nbsp;NAMA </font></strong></td>
+                                              <td valign="top" width="2%"><strong>:</strong></td>
+                                              <td valign="top"> <strong><font face="calibri">${siswaData.nama}</font></strong></td>
+                                          </tr>
+                                          <tr>
+                                              <td valign="top" height="1"> <strong><font face="calibri">&nbsp;ALAMAT</font></strong></td>
+                                              <td valign="top"><strong>:</strong></td>
+                                              <td width="81%"> <strong><font face="calibri">${siswaData.alamat_lengkap}</font></strong></td>
+                                          </tr>
+                                          <tr>
+                                              <td valign="top" height="1"><strong><font face="calibri">&nbsp;KELOMPOK</font></strong></td>
+                                              <td valign="top"><strong>:</strong></td>
+                                              <td valign="top"> <strong><font face="calibri">${siswaData.kelompok_sambung}</font></strong></td>
+                                          </tr>
+                                          <tr>
+                                              <td valign="top" height="1"><strong><font face="calibri">&nbsp;DAERAH</font></strong></td>
+                                              <td><strong>:</strong></td>
+                                              <td rowspan="1" valign="top"> <strong><font face="calibri">${siswaData.daerah_sambung}</font></strong></td>
+                                          </tr>
+                                          <tr>
+                                              <td colspan="2" style="font-size:12pt;font-family:Calibri"> </td>
+                                          </tr>
+                                        </tbody>
+                                    </table>
+                                  </td>
+                              </tr>
+                            </tbody>
+                        </table>
+                      </div>
+                  </td>
+                  <td>
+                      <div align="center">
+                        <table width="345" height="200" border="1" cellpadding="0" cellspacing="0">
+                            <tbody>
+                              <tr>
+                                  <td valign="top" background="${siteUrl}/print_assets/sticker.jpg" class="bgsize" width="110%">
+                                    <table width="100%" border="0" cellpadding="0" cellspacing="0" class="style1">
+                                        <tbody>
+                                          <tr>
+                                              <td height="64" colspan="5"></td>
+                                          </tr>
+                                          <tr>
+                                              <td valign="top" width="17%"><strong><font face="calibri">&nbsp;NAMA </font></strong></td>
+                                              <td valign="top" width="2%"><strong>:</strong></td>
+                                              <td valign="top"> <strong><font face="calibri">${siswaData.nama}</font></strong></td>
+                                          </tr>
+                                          <tr>
+                                              <td valign="top" height="1"> <strong><font face="calibri">&nbsp;ALAMAT</font></strong></td>
+                                              <td valign="top"><strong>:</strong></td>
+                                              <td width="81%"> <strong><font face="calibri">${siswaData.alamat_lengkap}</font></strong></td>
+                                          </tr>
+                                          <tr>
+                                              <td valign="top" height="1"><strong><font face="calibri">&nbsp;KELOMPOK</font></strong></td>
+                                              <td valign="top"><strong>:</strong></td>
+                                              <td valign="top"> <strong><font face="calibri">${siswaData.kelompok_sambung}</font></strong></td>
+                                          </tr>
+                                          <tr>
+                                              <td valign="top" height="1"><strong><font face="calibri">&nbsp;DAERAH</font></strong></td>
+                                              <td><strong>:</strong></td>
+                                              <td rowspan="1" valign="top"> <strong><font face="calibri">${siswaData.daerah_sambung}</font></strong></td>
+                                          </tr>
+                                          <tr>
+                                              <td colspan="2" style="font-size:12pt;font-family:Calibri"> </td>
+                                          </tr>
+                                        </tbody>
+                                    </table>
+                                  </td>
+                              </tr>
+                            </tbody>
+                        </table>
+                      </div>
+                  </td>
+                </tr>
+            </tbody>
+          </table>
+          <table width="747" height="70%" border="0">
+            <tbody>
+                <tr>
+                  <td width="184" height="50">
+                      <div align="center">
+                        <table width="165" border="1" cellpadding="0" cellspacing="0">
+                            <tbody>
+                              <tr>
+                                  <td valign="top" background="${siteUrl}/print_assets/sticker.jpg" class="bgsize2" width="90%">
+                                    <table width="100%" border="0" cellpadding="0" cellspacing="0" class="style1">
+                                        <tbody>
+                                          <tr>
+                                              <td height="25" colspan="3"></td>
+                                          </tr>
+                                          <tr>
+                                          </tr>
+                                          <tr>
+                                              <td valign="top" colspan="3">
+                                                <strong><font face="calibri" size="2"></font></strong>
+                                                <center>
+                                                    <strong><font face="calibri" size="2">${siswaData.nama}</font></strong>
+                                                    <center><strong><font face="calibri" size="2"></font></strong></center>
+                                                </center>
+                                              </td>
+                                          </tr>
+                                          <tr>
+                                              <td valign="top" colspan="3">
+                                                <strong><font face="calibri" size="2"></font></strong>
+                                                <center>
+                                                    <strong><font face="calibri" size="2">${siswaData.daerah_sambung}</font></strong>
+                                                    <center><strong><font face="calibri" size="2"></font></strong></center>
+                                                </center>
+                                              </td>
+                                          </tr>
+                                        </tbody>
+                                    </table>
+                                  </td>
+                              </tr>
+                            </tbody>
+                        </table>
+                      </div>
+                  </td>
+                  <td>
+                      <div align="center">
+                        <table width="165" border="1" cellpadding="0" cellspacing="0">
+                            <tbody>
+                              <tr>
+                                  <td valign="top" background="${siteUrl}/print_assets/sticker.jpg" class="bgsize2" width="90%">
+                                    <table width="100%" border="0" cellpadding="0" cellspacing="0" class="style1">
+                                        <tbody>
+                                          <tr>
+                                              <td height="25" colspan="3"></td>
+                                          </tr>
+                                          <tr>
+                                          </tr>
+                                          <tr>
+                                              <td valign="top" colspan="3">
+                                                <strong><font face="calibri" size="2"></font></strong>
+                                                <center>
+                                                    <strong><font face="calibri" size="2">${siswaData.nama}</font></strong>
+                                                    <center><strong><font face="calibri" size="2"></font></strong></center>
+                                                </center>
+                                              </td>
+                                          </tr>
+                                          <tr>
+                                              <td valign="top" colspan="3">
+                                                <strong><font face="calibri" size="2"></font></strong>
+                                                <center>
+                                                    <strong><font face="calibri" size="2">${siswaData.daerah_sambung}</font></strong>
+                                                    <center><strong><font face="calibri" size="2"></font></strong></center>
+                                                </center>
+                                              </td>
+                                          </tr>
+                                        </tbody>
+                                    </table>
+                                  </td>
+                              </tr>
+                            </tbody>
+                        </table>
+                      </div>
+                  </td>
+                  <td>
+                      <div align="center">
+                        <table width="165" border="1" cellpadding="0" cellspacing="0">
+                            <tbody>
+                              <tr>
+                                  <td valign="top" background="${siteUrl}/print_assets/sticker.jpg" class="bgsize2" width="90%">
+                                    <table width="100%" border="0" cellpadding="0" cellspacing="0" class="style1">
+                                        <tbody>
+                                          <tr>
+                                              <td height="25" colspan="3"></td>
+                                          </tr>
+                                          <tr>
+                                          </tr>
+                                          <tr>
+                                              <td valign="top" colspan="3">
+                                                <strong><font face="calibri" size="2"></font></strong>
+                                                <center>
+                                                    <strong><font face="calibri" size="2">${siswaData.nama}</font></strong>
+                                                    <center><strong><font face="calibri" size="2"></font></strong></center>
+                                                </center>
+                                              </td>
+                                          </tr>
+                                          <tr>
+                                              <td valign="top" colspan="3">
+                                                <strong><font face="calibri" size="2"></font></strong>
+                                                <center>
+                                                    <strong><font face="calibri" size="2">${siswaData.daerah_sambung}</font></strong>
+                                                    <center><strong><font face="calibri" size="2"></font></strong></center>
+                                                </center>
+                                              </td>
+                                          </tr>
+                                        </tbody>
+                                    </table>
+                                  </td>
+                              </tr>
+                            </tbody>
+                        </table>
+                      </div>
+                  </td>
+                  <td>
+                      <div align="center">
+                        <table width="165" border="1" cellpadding="0" cellspacing="0">
+                            <tbody>
+                              <tr>
+                                  <td valign="top" background="${siteUrl}/print_assets/sticker.jpg" class="bgsize2" width="90%">
+                                    <table width="100%" border="0" cellpadding="0" cellspacing="0" class="style1">
+                                        <tbody>
+                                          <tr>
+                                              <td height="25" colspan="3"></td>
+                                          </tr>
+                                          <tr>
+                                              <td valign="top" colspan="3">
+                                                <strong><font face="calibri" size="2"></font></strong>
+                                                <center>
+                                                    <strong><font face="calibri" size="2">${siswaData.nama}</font></strong>
+                                                    <center><strong><font face="calibri" size="2"></font></strong></center>
+                                                </center>
+                                              </td>
+                                          </tr>
+                                          <tr>
+                                              <td valign="top" colspan="3">
+                                                <strong><font face="calibri" size="2"></font></strong>
+                                                <center>
+                                                    <strong><font face="calibri" size="2">${siswaData.daerah_sambung}</font></strong>
+                                                    <center><strong><font face="calibri" size="2"></font></strong></center>
+                                                </center>
+                                              </td>
+                                          </tr>
+                                        </tbody>
+                                    </table>
+                                  </td>
+                              </tr>
+                            </tbody>
+                        </table>
+                      </div>
+                  </td>
+                </tr>
+            </tbody>
+          </table>
+      </body>
+    </html>
     `);
+
     printWindow.document.close();
     return printWindow;
   }
 
-  else {
-    printWindow.document.write(`
-      <!DOCTYPE html>
-      <html lang="id">
-      <head>
-          <meta charset="UTF-8">
-          <title>${title}</title>
-          <style type="text/css">
-              @page {
-                  size: A4;
-                  margin: 10mm;
-              }
-          </style>
-      </head>
-      <body style="margin: 0; padding: 0;">
-      </body>
-      </html>
-    `);
+  else if (type === 'nota') {
+    printWindow.document.write(generateNotaHTML(pembayaranData.siswa, pembayaranData.transaction));
 
     printWindow.document.close();
     return printWindow;
   } 
+  
+  else {
+    throw new Error('Unsupported print type');
+  }
 }
 
 function generateNotaHTML(siswa: Siswa, transaction: PaymentTransaction): string {
-  const transactionDate = new Date(transaction.transaction_date).toLocaleDateString('id-ID', {
-    day: '2-digit', month: 'long', year: 'numeric'
-  });
-
+  const siteUrl = window.location.origin;
+  const transactionDate = new Date(transaction.transaction_date).toLocaleDateString('id-ID');
   const gunaPembayaran = Array.from(new Set(transaction.items.map(item => item.category_name))).join(', ');
+  const terbilangText = terbilang(transaction.total_amount);
+  const totalFormatted = formatRupiah(transaction.total_amount);
 
-  return `
-    <!DOCTYPE html>
-    <html lang="id">
-    <head>
-        <meta charset="UTF-8">
-        <title>Nota Pembayaran - ${siswa.nama}</title>
-        <style>
-            @page { size: 210mm 148mm; margin: 5mm; } /* A5 Landscape, adjust if nota is half A4 portrait */
-            body { font-family: 'Arial', 'Helvetica', sans-serif; font-size: 10pt; line-height: 1.4; color: #000; margin:0; padding:0; }
-            .nota-container { display: flex; width: 100%; height: 100%; border: 1px solid #ccc; }
-            .main-nota { flex: 0 0 70%; padding: 10mm; box-sizing: border-box; position: relative; border-right: 1px dashed #ccc;}
-            .slip-nota { flex: 0 0 30%; padding: 10mm 8mm; box-sizing: border-box; position: relative; }
+  const itemRows = transaction.items.map(item => 
+    `<tr>
+      <td>&nbsp;</td>
+      <td class="style6">${item.category_name}</td>
+      <td>:</td>
+      <td class="style6">Rp.</td>
+      <td><div align="right"><span class="style6">&nbsp;${formatRupiah(item.amount, false)}</span></div></td>
+      <td>&nbsp;</td>
+    </tr>`
+  ).join('');
 
-            .header { text-align: center; margin-bottom: 8mm; }
-            .header img { width: 40mm; margin-bottom: 2mm; }
-            .header h1 { font-size: 12pt; margin: 0; font-weight: bold; }
-            .header p { font-size: 8pt; margin: 1mm 0; }
-
-            .nota-details, .slip-details { margin-bottom: 5mm; }
-            .nota-details table, .slip-details table { width: 100%; border-collapse: collapse; font-size: 9pt; }
-            .nota-details td, .slip-details td { padding: 1mm 0; vertical-align: top; }
-            .label { width: 30%; }
-            .value { width: 68%; }
-            .colon { width: 2%; text-align: center;}
-
-            .payment-info { margin-top: 8mm; }
-            .terbilang { font-style: italic; margin-bottom: 2mm; font-size: 9pt;}
-            .total-box { border: 1px solid #000; padding: 2mm 3mm; text-align: center; font-weight: bold; font-size: 11pt; margin-bottom: 5mm; }
-            .signature-area { margin-top: 10mm; font-size: 9pt; }
-            .signature-area .petugas { float: right; text-align: center; }
-            .signature-area .petugas .name { margin-top: 10mm; }
-
-            .slip-header { text-align: center; margin-bottom: 5mm; }
-            .slip-header h2 { font-size: 10pt; margin:0; font-weight: bold; }
-            .slip-items table { width: 100%; font-size: 8pt; margin-top: 3mm; }
-            .slip-items th, .slip-items td { text-align: left; padding: 1mm; border-bottom: 1px solid #eee; }
-            .slip-items th { font-weight: bold; }
-            .slip-items td.amount { text-align: right; }
-            .slip-total { margin-top: 3mm; text-align: right; font-weight: bold; font-size: 9pt;}
-
-            .clearfix::after { content: ""; clear: both; display: table; }
-        </style>
-    </head>
-    <body>
-        <div class="nota-container">
-            <div class="main-nota">
-                <div class="header">
-                    <h1>BUKTI PEMBAYARAN</h1>
-                    <p>Jl. Raya Kejapanan No. 27 Kejapanan, Gempol, Pasuruan (67155)</p>
-                </div>
-
-                <div class="nota-details">
-                    <table>
-                        <tr>
-                            <td class="label">Telah terima dari</td><td class="colon">:</td><td class="value">${siswa.nama || '-'}</td>
-                        </tr>
-                        <tr>
-                            <td class="label">NIS / NISPN</td><td class="colon">:</td><td class="value">${siswa.nis || '-'} / ${siswa.nispn || '-'}</td>
-                        </tr>
-                        <tr>
-                            <td class="label">Alamat</td><td class="colon">:</td><td class="value">${siswa.alamat_lengkap || '-'}</td>
-                        </tr>
-                        <tr>
-                            <td class="label">Guna Pembayaran</td><td class="colon">:</td><td class="value">${gunaPembayaran}</td>
-                        </tr>
-                    </table>
-                </div>
-
-                <div class="payment-info">
-                    <div class="terbilang">Terbilang: ${terbilang(transaction.total_amount)}</div>
-                    <div class="total-box">Total Bayar: ${formatRupiah(transaction.total_amount)}</div>
-                </div>
-
-                <div class="signature-area clearfix">
-                    <div class="petugas">
-                        Pasuruan, ${transactionDate}<br>
-                        Petugas,<br><br><br><br>
-                        <span class="name">( ${transaction.processed_by_petugas} )</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="slip-nota">
-                <div class="slip-header">
-                    <h2>TANDA TERIMA</h2>
-                </div>
-                <div class="slip-details">
-                    <table>
-                        <tr><td>Tanggal</td><td class="colon">:</td><td>${transactionDate}</td></tr>
-                        <tr><td>Nama</td><td class="colon">:</td><td>${siswa.nama || '-'}</td></tr>
-                        <tr><td>NISPN</td><td class="colon">:</td><td>${siswa.nispn || '-'}</td></tr>
-                         <tr><td>Petugas</td><td class="colon">:</td><td>${transaction.processed_by_petugas}</td></tr>
-                    </table>
-                </div>
-                <div class="slip-items">
-                    <table>
-                        <thead><tr><th>Keterangan</th><th>Jumlah</th></tr></thead>
-                        <tbody>
-                            ${transaction.items.map(item => `
-                                <tr>
-                                    <td>${item.description_for_nota}</td>
-                                    <td class="amount">${formatRupiah(item.amount)}</td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                </div>
-                <div class="slip-total">
-                    Total: ${formatRupiah(transaction.total_amount)}
-                </div>
-                 <div style="font-size: 7pt; text-align:center; margin-top:10mm;">Simpanlah slip ini sebagai bukti pembayaran yang sah.</div>
-            </div>
-        </div>
-    </body>
-    </html>
-  `;
-}
-
-function generateCocardDepan(siswa: Siswa): string {
-  const photoUrl = siswa.foto_siswa || "/print_assets/placeholder_person.png"
-  const studentName = (siswa.nama || "").toUpperCase()
-  const studentId = siswa.nis || siswa.nispn || ""
-
-  return `
-    <style>
-      @page {
-        size: 5.4cm 8.5cm;
-        margin: 0;
-      }
-      
-      body {
-        margin: 0;
-        padding: 0;
-        font-family: 'Gotham', 'Calibri', Arial, sans-serif;
-        background-image: url('/print_assets/cocard_depan.png');
-        background-size: cover;
-        background-repeat: no-repeat;
-        background-position: center;
-        width: 5.4cm;
-        height: 8.5cm;
-        position: relative;
-      }
-      
-      .photo-container {
-        position: absolute;
-        top: 2.2cm;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 2.4cm;
-        height: 3.2cm;
-        overflow: hidden;
-        border-radius: 4px;
-      }
-      
-      .photo {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-      
-      .name-container {
-        position: absolute;
-        top: 5.8cm;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 4.8cm;
-        text-align: center;
-      }
-      
-      .student-name {
-        font-size: 10px;
-        font-weight: bold;
-        color: #000;
-        line-height: 1.2;
-        word-wrap: break-word;
-      }
-      
-      .student-id {
-        position: absolute;
-        top: 6.5cm;
-        left: 50%;
-        transform: translateX(-50%);
-        font-size: 9px;
-        font-weight: bold;
-        color: #000;
-        text-align: center;
-      }
+  return `<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Nota Pembayaran</title>
+    <style type="text/css">
+      .style6 { font-size: 16px }
+      .style7 { font-size: 14px }
+      .header-container table { width: 100%; }
+      .header-inner { width: 100%; text-align: center; }
     </style>
-    
-    <div class="photo-container">
-      <img src="${photoUrl}" alt="Student Photo" class="photo" crossorigin="anonymous">
-    </div>
-    
-    <div class="name-container">
-      <div class="student-name">${studentName}</div>
-    </div>
-    
-    <div class="student-id">${studentId}</div>
-  `
-}
-
-function generateCocardBelakang(siswa: Siswa): string {
-  const studentId = siswa.nis || siswa.nispn || ""
-  const studentName = (siswa.nama || "").toUpperCase()
-  const studentAddress = siswa.alamat_lengkap || ""
-
-  return `
-    <style>
-      @page {
-        size: 54.5mm 85.6mm;
-        margin: 0;
-      }
-      
-      body {
-        margin: 0;
-        padding: 0;
-        font-family: 'Gotham', 'Calibri', Arial, sans-serif;
-        background-image: url('/print_assets/cocard_belakang.png');
-        background-size: cover;
-        background-repeat: no-repeat;
-        background-position: center;
-        width: 54.5mm;
-        height: 85.6mm;
-        position: relative;
-      }
-      
-      .content-table {
-        position: absolute;
-        top: 25mm;
-        left: 4mm;
-        width: 46mm;
-        font-size: 7px;
-        color: #000;
-      }
-      
-      .content-table table {
-        width: 100%;
-        border-collapse: collapse;
-      }
-      
-      .content-table td {
-        padding: 1mm 0;
-        vertical-align: top;
-        line-height: 1.2;
-      }
-      
-      .label {
-        font-weight: bold;
-        width: 15mm;
-      }
-      
-      .colon {
-        width: 2mm;
-        text-align: center;
-      }
-      
-      .value {
-        font-weight: normal;
-        word-wrap: break-word;
-      }
-      
-      .address-cell {
-        height: 20mm;
-        vertical-align: top;
-      }
-    </style>
-    
-    <div class="content-table">
-      <table>
-        <tr>
-          <td class="label">No Induk</td>
-          <td class="colon">:</td>
-          <td class="value">${studentId}</td>
-        </tr>
-        <tr>
-          <td class="label">Nama</td>
-          <td class="colon">:</td>
-          <td class="value">${studentName}</td>
-        </tr>
-        <tr>
-          <td class="label">Alamat</td>
-          <td class="colon">:</td>
-          <td class="value address-cell">${studentAddress}</td>
-        </tr>
-      </table>
-    </div>
-  `
-}
-
-function generateStikerIdentitas(siswa: Siswa): string {
-  const studentName = siswa.nama || ""
-  const studentAddress = siswa.alamat_lengkap || ""
-  const kelompokSambung = siswa.kelompok_sambung || ""
-  const daerahSambung = siswa.daerah_sambung || ""
-
-  return `
-    <style>
-      @page {
-        size: A4;
-        margin: 10mm;
-      }
-      
-      body {
-        margin: 0;
-        padding: 0;
-        font-family: 'Gotham', 'Calibri', Arial, sans-serif;
-        background-image: url('/print_assets/Stiker Fix.jpg');
-        background-size: cover;
-        background-repeat: no-repeat;
-        background-position: center;
-      }
-      
-      .sticker-sheet {
-        width: 100%;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        gap: 5mm;
-      }
-      
-      .large-stickers {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 5mm;
-        margin-bottom: 10mm;
-      }
-      
-      .large-sticker {
-        border: 1px solid #ccc;
-        padding: 8mm;
-        background: rgba(255, 255, 255, 0.9);
-        border-radius: 3mm;
-        font-size: 10px;
-        line-height: 1.4;
-        height: 40mm;
-      }
-      
-      .small-stickers {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 3mm;
-      }
-      
-      .small-sticker {
-        border: 1px solid #ccc;
-        padding: 4mm;
-        background: rgba(255, 255, 255, 0.9);
-        border-radius: 2mm;
-        font-size: 8px;
-        text-align: center;
-        line-height: 1.3;
-        height: 20mm;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-      }
-      
-      .sticker-field {
-        margin-bottom: 2mm;
-      }
-      
-      .field-label {
-        font-weight: bold;
-        color: #333;
-      }
-      
-      .field-value {
-        color: #000;
-        word-wrap: break-word;
-      }
-      
-      .center-text {
-        text-align: center;
-      }
-    </style>
-    
-    <div class="sticker-sheet">
-      <!-- Large Stickers (2x2 layout) -->
-      <div class="large-stickers">
-        ${Array(4)
-          .fill(0)
-          .map(
-            () => `
-          <div class="large-sticker">
-            <div class="sticker-field">
-              <div class="field-label">NAMA:</div>
-              <div class="field-value">${studentName}</div>
-            </div>
-            <div class="sticker-field">
-              <div class="field-label">ALAMAT:</div>
-              <div class="field-value">${studentAddress}</div>
-            </div>
-            <div class="sticker-field">
-              <div class="field-label">KELOMPOK:</div>
-              <div class="field-value">${kelompokSambung}</div>
-            </div>
-            <div class="sticker-field">
-              <div class="field-label">DAERAH:</div>
-              <div class="field-value">${daerahSambung}</div>
-            </div>
-          </div>
-        `,
-          )
-          .join("")}
-      </div>
-      
-      <!-- Small Stickers (1x4 layout) -->
-      <div class="small-stickers">
-        ${Array(8)
-          .fill(0)
-          .map(
-            () => `
-          <div class="small-sticker">
-            <div class="sticker-field center-text">
-              <div class="field-label">NAMA:</div>
-              <div class="field-value">${studentName}</div>
-            </div>
-            <div class="sticker-field center-text">
-              <div class="field-label">DAERAH:</div>
-              <div class="field-value">${daerahSambung}</div>
-            </div>
-          </div>
-        `,
-          )
-          .join("")}
-      </div>
-    </div>
-  `
+  </head>
+  <body>
+    <table width="1007" height="466" border="1" cellpadding="0" cellspacing="0" bordercolor="#000000">
+      <tr>
+        <!-- Left Column -->
+        <td width="757" valign="top">
+          <table width="100%" border="0">
+            <!-- Header Section -->
+            <tr>
+              <td colspan="7" rowspan="2" class="header-container">
+                <table class="header-inner" border="0">
+                  <tr>
+                    <td width="121" align="center" rowspan="4">
+                      <img src="${siteUrl}/print_assets/logo_ponpes.png" width="121" height="107" />
+                    </td>
+                    <td align="center">
+                      <img src="${siteUrl}/print_assets/header_arabic.png" width="400" height="70" />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td align="center" style="font-size:15px"><strong>PONDOK PESANTREN WALI BAROKAH KOTA KEDIRI</strong></td>
+                  </tr>
+                  <tr>
+                    <td align="center" style="font-size:13px">Jl. Hos Cokroaminoto No.195, Kota Kediri, Jawa Timur</td>
+                  </tr>
+                  <tr>
+                    <td align="center" style="font-size:12px">Telp. (0354) 687367 | www.walibarokah.org</td>
+                  </tr>
+                  <tr><td colspan="2"><hr/><hr/></td></tr>
+                </table>
+              </td>
+            </tr>
+            <tr></tr>
+            <!-- Student Info -->
+            <tr>
+              <td width="23">&nbsp;</td>
+              <td width="102"><span class="style6">NIS</span></td>
+              <td width="17">:</td>
+              <td width="217">${siswa.nispn}</td>
+              <td width="93">Pendidikan</td>
+              <td width="13">:</td>
+              <td width="139">${siswa.pendidikan || '-'}</td>
+            </tr>
+            <tr>
+              <td>&nbsp;</td>
+              <td>Nama</td>
+              <td>:</td>
+              <td>${siswa.nama}</td>
+              <td>Binti</td>
+              <td>:</td>
+              <td>${siswa.nama_ayah || '-'}</td>
+            </tr>
+            <tr>
+              <td>&nbsp;</td>
+              <td>Tempat Lahir</td>
+              <td>:</td>
+              <td>${siswa.tempat_lahir || '-'}</td>
+              <td>Tgl Lahir</td>
+              <td>:</td>
+              <td>${siswa.tanggal_lahir || '-'}</td>
+            </tr>
+            <tr>
+              <td>&nbsp;</td>
+              <td>Kelompok</td>
+              <td>:</td>
+              <td>${siswa.kelompok_sambung || '-'}</td>
+              <td>Status</td>
+              <td>:</td>
+              <td>${siswa.status_mondok || '-'}</td>
+            </tr>
+            <tr>
+              <td>&nbsp;</td>
+              <td>Daerah</td>
+              <td>:</td>
+              <td colspan="2">${siswa.daerah_sambung || '-'}</td>
+            </tr>
+            <tr>
+              <td>&nbsp;</td>
+              <td valign="top">Total Bayar</td>
+              <td valign="top">:</td>
+              <td colspan="5" valign="top">
+                Rp. ${totalFormatted} ( ${terbilangText} )<br />
+                ( Guna Pembayaran - ${gunaPembayaran} )
+              </td>
+            </tr>
+            <tr>
+              <td>&nbsp;</td>
+              <td colspan="4" align="left">
+                <strong><u>Alamat :</u></strong><br />
+                ${siswa.alamat_lengkap}<br /><br />
+                <font color="#FF0105"><i>NB : Kartu sementara ini dipegang santri sampai masa berlaku habis...</i></font>
+              </td>
+              <td colspan="3">
+                <p align="center" class="style6">
+                  <strong>Kediri, ${transactionDate}</strong><br />Petugas,<br /><br /><br /><br />
+                  (${transaction.processed_by_petugas})
+                </p>
+              </td>
+            </tr>
+          </table>
+        </td>
+        <!-- Right Column -->
+        <td valign="top">
+          <table>
+            <tr>
+              <td colspan="6">
+                <center>
+                  ${transactionDate}<br />
+                  <hr />
+                </center>
+              </td>
+            </tr>
+            <tr><td>&nbsp;</td><td>Petugas</td><td>:</td><td colspan="3">${transaction.processed_by_petugas}</td></tr>
+            <tr><td>&nbsp;</td><td>NIS</td><td>:</td><td colspan="3">${siswa.nispn}</td></tr>
+            <tr><td>&nbsp;</td><td>Nama</td><td>:</td><td colspan="3">${siswa.nama}</td></tr>
+            ${itemRows}
+            <tr><td colspan="6"><hr /></td></tr>
+            <tr>
+              <td>&nbsp;</td>
+              <td><strong>Jumlah</strong></td><td>:</td><td><strong>Rp.</strong></td>
+              <td><div align="right"><strong>${formatRupiah(transaction.total_amount, false)}</strong></div></td>
+              <td>&nbsp;</td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>`;
 }
