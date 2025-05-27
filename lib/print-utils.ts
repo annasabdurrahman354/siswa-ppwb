@@ -87,9 +87,6 @@ export function generatePrintDocument(
                 </tbody>
             </table>
         </div>
-        <script language="javascript">
-            window.print();
-        </script>
     </body>
     </html>
     `);
@@ -155,9 +152,6 @@ export function generatePrintDocument(
             </tbody>
         </table>
     </div>
-    <script language="javascript">
-        window.print();
-    </script>
     </body>
     </html>     
     `);

@@ -126,10 +126,21 @@ export default function SiswaDetailPage() {
     router.push(`/siswa/${nispn}/update-photo?foto_siswa=${encodeURIComponent(siswa?.foto_siswa || "")}`);
   };
 
-  const handlePrint = (type: "cocard-depan" | "cocard-belakang" | "stiker") => {
-    if (!siswa) return;
-    const printWindow = generatePrintDocument(siswa, type);
-  };
+ const handlePrint = (type: "cocard-depan" | "cocard-belakang" | "stiker") => {
+    if (!siswa) return
+
+    const printWindow = generatePrintDocument(siswa, type)
+    if (printWindow) {
+      printWindow.focus()
+      setTimeout(() => {
+        printWindow.print()
+        printWindow.onafterprint = () => {
+          printWindow.close()
+        }
+      }, 500)
+    }
+  }
+
 
   const handlePrintNota = (transaction: PaymentTransaction) => {
     if (!siswa || !transaction) return;
