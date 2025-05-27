@@ -31,12 +31,13 @@ export default function UpdatePhotoPage() {
   const [selectedDevice, setSelectedDevice] = useState<string>("")
   const [capturedImage, setCapturedImage] = useState<string | null>(null)
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
-  const [crop, setCrop] = useState({
+  // Enhanced crop state with better defaults for 3:4 ratio
+  const [crop, setCrop] = useState<{ unit: "%" | "px"; width: number; height: number; x: number; y: number }>({
     unit: "%",
-    width: 45,
-    height: 60,
-    x: 27.5,
-    y: 20,
+    width: 60,    // Increased default width
+    height: 80,   // Height that maintains 3:4 ratio (60 * 4/3 = 80)
+    x: 20,        // Centered horizontally
+    y: 10,        // Centered vertically
   })
   const [completedCrop, setCompletedCrop] = useState<PixelCrop>()
   const [showCropper, setShowCropper] = useState(false)
@@ -46,6 +47,12 @@ export default function UpdatePhotoPage() {
   const webcamRef = useRef<Webcam>(null)
   const imgRef = useRef<HTMLImageElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  // Add minimum and maximum dimensions to enforce 3:4 ratio
+  const minCropWidth = 150  // Minimum width in pixels
+  const minCropHeight = 200 // Minimum height in pixels (150 * 4/3 = 200)
+  const maxCropWidth = 600  // Maximum width in pixels
+  const maxCropHeight = 800 // Maximum height in pixels (600 * 4/3 = 800)
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -147,6 +154,12 @@ export default function UpdatePhotoPage() {
         })
       }
     }
+  }
+
+  // Enhanced crop change handler that enforces 3:4 ratio
+  const handleCropChange = (crop: any, percentCrop: any) => {
+    // Always use the percentCrop to maintain consistency
+    setCrop(percentCrop)
   }
 
   const handleSave = async () => {
@@ -348,9 +361,14 @@ export default function UpdatePhotoPage() {
                   <div className="border-2 border-primary-200 rounded-lg overflow-hidden">
                     <ReactCrop
                       crop={crop}
-                      onChange={(_, percentCrop) => setCrop(percentCrop)}
+                      onChange={handleCropChange}
                       onComplete={(c) => setCompletedCrop(c)}
-                      aspect={3 / 4}
+                      aspect={3 / 4}                    // Enforce 3:4 aspect ratio
+                      minWidth={minCropWidth}           // Minimum crop width
+                      minHeight={minCropHeight}         // Minimum crop height  
+                      maxWidth={maxCropWidth}           // Maximum crop width
+                      maxHeight={maxCropHeight}         // Maximum crop height
+                      keepSelection={true}              // Prevent deselection
                       className="max-w-full"
                     >
                       <img
