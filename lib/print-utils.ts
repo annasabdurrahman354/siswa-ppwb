@@ -156,6 +156,10 @@ export function generatePrintDocument(
             </tbody>
         </table>
     </div>
+    <script language="javascript">
+        window.print();
+        window.onfocus=function(){ window.close();}
+    </script>
     </body>
     </html>     
     `);
