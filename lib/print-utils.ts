@@ -10,6 +10,9 @@ export function generatePrintDocument(
   let siswaData = data as Siswa; // Cast because other types only take Siswa
   let pembayaranData = data as { siswa: Siswa; transaction: PaymentTransaction }
 
+  // Get the current site URL
+  const siteUrl = window.location.origin;
+
   if (type === "nota") {
     if (!('transaction' in data)) {
       console.error("Transaction data is required for nota printing.");
@@ -62,13 +65,13 @@ export function generatePrintDocument(
             <table width="212" height="329" border="0" cellpadding="0" cellspacing="0">
                 <tbody>
                     <tr>
-                        <td valign="bottom" background="/print_assets/cocard_depan.png" style="background-repeat: no-repeat; height: 50px; width: 50px; background-size: 100% 329px;">
+                        <td valign="bottom" background="${siteUrl}/print_assets/cocard_depan.png" style="background-repeat: no-repeat; height: 50px; width: 50px; background-size: 100% 329px;">
                             <table width="98%" height="200" border="0" cellpadding="0" cellspacing="0">
                                 <tbody>
                                     <tr>
                                         <td valign="top">
                                             <div style="margin-left: 50px; margin-right: auto; margin-top: -23px;">
-                                                <img src="${siswaData.foto_siswa}" alt="no_pic" width="114" height="152">
+                                                <img src="${(siswaData.foto_siswa ?? '').startsWith('http') ? (siswaData.foto_siswa ?? '') : siteUrl + (siswaData.foto_siswa ?? '/print_assets/placeholder_person.png')}" alt="no_pic" width="114" height="152">
                                             </div> 
                                             <!-- Menambahkan kontainer untuk nama -->
                                             <div style="text-align: center; margin-top: 0px;">
@@ -112,7 +115,7 @@ export function generatePrintDocument(
 
     <body style="margin: 0; padding: 0;">
 
-    <div style="width: 54.5mm; height: 85.6mm; page-break-after: always; background-image: url('/print_assets/cocard_belakang.png'); background-size: cover; background-repeat: no-repeat;">
+    <div style="width: 54.5mm; height: 85.6mm; page-break-after: always; background-image: url('${siteUrl}/print_assets/cocard_belakang.png'); background-size: cover; background-repeat: no-repeat;">
         <table border="0" style="font-size: 10px; font-family: Gotham, 'Helvetica Neue', Helvetica, Arial, sans-serif; width: 100%;"> 
             <tbody>
                 <tr>
