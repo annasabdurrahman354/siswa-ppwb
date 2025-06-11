@@ -395,13 +395,13 @@ export default function UpdatePhotoPage() {
                       maxWidth={maxCropWidth}
                       maxHeight={maxCropHeight}
                       keepSelection={true}
-                      className="max-w-full"
+                      className="h-96"
                     >
                       <img
                         ref={imgRef}
                         alt="Crop me"
                         src={capturedImage || "/placeholder.svg"}
-                        className="max-w-full h-auto"
+                        className="h-96 w-auto"
                         onLoad={onImageLoad}
                       />
                     </ReactCrop>
