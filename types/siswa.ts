@@ -1,7 +1,25 @@
+export interface RiwayatPonpes {
+  nama: string
+  tanggal_masuk: string | null
+  status: number
+}
+
+export interface RiwayatKelas {
+  nama: string
+  tanggal_masuk: string | null
+  status: number
+}
+
+export interface RiwayatKelompok {
+  nama: string
+  tanggal_masuk: string | null
+  status: number
+}
+
 export interface Siswa {
-  nispn: string 
+  nispn: string
   nis: string | null
-  nama: string 
+  nama: string
   jenis_kelamin: string
   nama_ayah: string
   nama_ibu: string
@@ -21,6 +39,11 @@ export interface Siswa {
   kelompok_sambung: string
   daerah_sambung: string
   status_mondok: string
+
+  // NEW FIELDS
+  riwayat_ponpes: RiwayatPonpes[]
+  riwayat_kelas: RiwayatKelas[]
+  riwayat_kelompok: RiwayatKelompok[]
 }
 
 export interface SiswaPaginatedResponse {
