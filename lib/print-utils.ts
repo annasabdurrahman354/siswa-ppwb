@@ -2,6 +2,145 @@ import { PaymentTransaction } from "@/types/payment"
 import type { Siswa } from "@/types/siswa"
 import { terbilang, formatRupiah } from "./terbilang"
 
+// Helper to generate HTML for the front of the cocard
+function generateCocardDepanHTML(siswa: Siswa, siteUrl: string): string {
+  // A slightly improved layout for better alignment
+  return `
+    <div style="width: 5.4cm; height: 8.5cm; page-break-after: always;">
+      <table width="212" height="329" border="0" cellpadding="0" cellspacing="0">
+          <tbody>
+              <tr>
+                  <td valign="bottom" background="${siteUrl}/print_assets/cocard_depan.png" style="background-repeat: no-repeat; height: 50px; width: 50px; background-size: 100% 329px;">
+                      <table width="98%" height="200" border="0" cellpadding="0" cellspacing="0">
+                          <tbody>
+                              <tr>
+                                  <td valign="top">
+                                      <div style="margin-left: 50px; margin-right: auto; margin-top: -23px;">
+                                          <img src="${(siswa.foto_siswa ?? '').startsWith('http') ? (siswa.foto_siswa ?? '') : siteUrl + (siswa.foto_siswa ?? '/print_assets/placeholder_person.png')}" alt="no_pic" width="114" height="152">
+                                      </div> 
+                                      <!-- Menambahkan kontainer untuk nama -->
+                                      <div style="text-align: center; margin-top: 0px;">
+                                          <strong><span style="font-family: 'Times New Roman', Times, serif; font-size: 12px;">${siswa.nama}</span></strong>
+                                      </div>
+                                      <!-- Menambahkan kontainer untuk NIS -->
+                                      <div style="text-align: center; margin-top: 0px;">
+                                          <span style="font-family: 'Times New Roman', Times, serif; font-size: 12px;">${siswa.nispn}</span>
+                                      </div>
+                                  </td>
+                              </tr>
+                          </tbody>
+                      </table>
+                  </td>
+              </tr>
+          </tbody>
+      </table>
+    </div>
+  `;
+}
+
+// Helper to generate HTML for the back of the cocard
+function generateCocardBelakangHTML(siswa: Siswa, siteUrl: string): string {
+    return `
+    <div style="width: 54.5mm; height: 85.6mm; page-break-after: always; background-image: url('${siteUrl}/print_assets/cocard_belakang.png'); background-size: cover; background-repeat: no-repeat;">
+      <table border="0" style="font-size: 10px; font-family: Gotham, 'Helvetica Neue', Helvetica, Arial, sans-serif; width: 100%;"> 
+          <tbody>
+              <tr>
+                  <td>
+                      <div align="center">
+                          <table width="100%" height="100%" border="0" cellpadding="0" cellspacing="0">
+                              <tbody>
+                                  <tr>
+                                      <td valign="top">
+                                          <br><br><br>
+                                          <table width="100%" height="100%" border="0" cellpadding="0" cellspacing="0">
+                                              <tbody>
+                                                  <tr>
+                                                      <td width="56" height="15" valign="top">No Induk</td>
+                                                      <td width="3" valign="top">:</td>
+                                                      <td width="117" valign="top">${siswa.nispn}</td>
+                                                  </tr>
+                                                  <tr>
+                                                      <td height="15" valign="top">Nama</td>
+                                                      <td valign="top">:</td>
+                                                      <td valign="top">${siswa.nama}</td>
+                                                  </tr>
+                                                  <tr>
+                                                      <td height="15" valign="top">Alamat</td>
+                                                      <td valign="top">:</td>
+                                                      <td valign="top" align="left" height="82">${siswa.alamat_lengkap}</td>
+                                                  </tr>
+                                              </tbody>
+                                          </table>
+                                      </td>
+                                  </tr>
+                              </tbody>
+                          </table>
+                      </div>
+                  </td>
+              </tr>
+          </tbody>
+      </table>
+  </div>
+    `;
+}
+
+// New function for bulk printing cocards
+export function generateBulkPrintDocument(
+  students: Siswa[],
+  type: "cocard-depan" | "cocard-belakang",
+): void {
+    const siteUrl = window.location.origin;
+    let title = "";
+    let allHtmlContent = "";
+
+    if (type === "cocard-depan") {
+        title = `Bulk Cocard Depan - ${students.length} Siswa`;
+        allHtmlContent = students.map(s => generateCocardDepanHTML(s, siteUrl)).join('');
+    } else if (type === "cocard-belakang") {
+        title = `Bulk Cocard Belakang - ${students.length} Siswa`;
+        allHtmlContent = students.map(s => generateCocardBelakangHTML(s, siteUrl)).join('');
+    } else {
+        return;
+    }
+
+    const printWindow = window.open("", "_blank");
+    if (!printWindow) {
+        alert("Gagal membuka jendela print. Pastikan popup blocker tidak aktif.");
+        return;
+    }
+
+    printWindow.document.write(`
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>${title}</title>
+        <style type="text/css">
+            @page {
+                size: 5.4cm 8.5cm;
+                margin: 0;
+            }
+            body { margin: 0; padding: 0; }
+        </style>
+    </head>
+    <body>
+        ${allHtmlContent}
+    </body>
+    </html>
+    `);
+
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(() => {
+        try {
+            printWindow.print();
+        } catch (e) {
+            console.error("Printing failed:", e);
+            printWindow.alert("Gagal memulai proses cetak.");
+        }
+    }, 500);
+}
+
+
 export function generatePrintDocument(
   data: Siswa | { siswa: Siswa; transaction: PaymentTransaction }, // Union type
   type: "cocard-depan" | "cocard-belakang" | "stiker" | "nota",
@@ -112,49 +251,47 @@ export function generatePrintDocument(
             }
         </style>
     </head>
-
     <body style="margin: 0; padding: 0;">
-
-    <div style="width: 54.5mm; height: 85.6mm; page-break-after: always; background-image: url('${siteUrl}/print_assets/cocard_belakang.png'); background-size: cover; background-repeat: no-repeat;">
-        <table border="0" style="font-size: 10px; font-family: Gotham, 'Helvetica Neue', Helvetica, Arial, sans-serif; width: 100%;"> 
-            <tbody>
-                <tr>
-                    <td>
-                        <div align="center">
-                            <table width="100%" height="100%" border="0" cellpadding="0" cellspacing="0">
-                                <tbody>
-                                    <tr>
-                                        <td valign="top">
-                                            <br><br><br>
-                                            <table width="100%" height="100%" border="0" cellpadding="0" cellspacing="0">
-                                                <tbody>
-                                                    <tr>
-                                                        <td width="56" height="15" valign="top">No Induk</td>
-                                                        <td width="3" valign="top">:</td>
-                                                        <td width="117" valign="top">${siswaData.nispn}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td height="15" valign="top">Nama</td>
-                                                        <td valign="top">:</td>
-                                                        <td valign="top">${siswaData.nama}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td height="15" valign="top">Alamat</td>
-                                                        <td valign="top">:</td>
-                                                        <td valign="top" align="left" height="82">${siswaData.alamat_lengkap}</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+      <div style="width: 54.5mm; height: 85.6mm; page-break-after: always; background-image: url('${siteUrl}/print_assets/cocard_belakang.png'); background-size: cover; background-repeat: no-repeat;">
+          <table border="0" style="font-size: 10px; font-family: Gotham, 'Helvetica Neue', Helvetica, Arial, sans-serif; width: 100%;"> 
+              <tbody>
+                  <tr>
+                      <td>
+                          <div align="center">
+                              <table width="100%" height="100%" border="0" cellpadding="0" cellspacing="0">
+                                  <tbody>
+                                      <tr>
+                                          <td valign="top">
+                                              <br><br><br>
+                                              <table width="100%" height="100%" border="0" cellpadding="0" cellspacing="0">
+                                                  <tbody>
+                                                      <tr>
+                                                          <td width="56" height="15" valign="top">No Induk</td>
+                                                          <td width="3" valign="top">:</td>
+                                                          <td width="117" valign="top">${siswaData.nispn}</td>
+                                                      </tr>
+                                                      <tr>
+                                                          <td height="15" valign="top">Nama</td>
+                                                          <td valign="top">:</td>
+                                                          <td valign="top">${siswaData.nama}</td>
+                                                      </tr>
+                                                      <tr>
+                                                          <td height="15" valign="top">Alamat</td>
+                                                          <td valign="top">:</td>
+                                                          <td valign="top" align="left" height="82">${siswaData.alamat_lengkap}</td>
+                                                      </tr>
+                                                  </tbody>
+                                              </table>
+                                          </td>
+                                      </tr>
+                                  </tbody>
+                              </table>
+                          </div>
+                      </td>
+                  </tr>
+              </tbody>
+          </table>
+      </div>
     </body>
     </html>     
     `);
@@ -931,7 +1068,7 @@ function generateNotaHTML(siswa: Siswa, transaction: PaymentTransaction): string
               <td valign="top">Total Bayar</td>
               <td valign="top">:</td>
               <td colspan="5" valign="top">
-                Rp. ${totalFormatted} ( ${terbilangText} )<br />
+                ${totalFormatted} ( ${terbilangText} )<br />
                 ( Guna Pembayaran - ${gunaPembayaran} )
               </td>
             </tr>

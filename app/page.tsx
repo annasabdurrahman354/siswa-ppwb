@@ -11,13 +11,16 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
+import { Checkbox } from "@/components/ui/checkbox"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useToast } from "@/hooks/use-toast"
 import { useDebounce } from "@/hooks/use-debounce"
-import { Eye, ChevronLeft, ChevronRight, BarChart, Users, Download } from "lucide-react"
-import type { SiswaPaginatedResponse } from "@/types/siswa"
+import { Eye, ChevronLeft, ChevronRight, Users, Download, ChevronDown } from "lucide-react"
+import type { Siswa, SiswaPaginatedResponse } from "@/types/siswa"
 import { Combobox } from "@/components/ui/combobox"
 import { ExportModal } from "@/components/modals/export-modal"
+import { generateBulkPrintDocument } from "@/lib/print-utils"
 
 // --- Tipe Data ---
 interface Kelas {
@@ -40,6 +43,8 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+  const [selectedNispns, setSelectedNispns] = useState<string[]>([]);
+
 
   // State untuk Filter Dropdowns
   const [kelasOptions, setKelasOptions] = useState<Kelas[]>([]);
@@ -130,11 +135,9 @@ export default function HomePage() {
   // Initial data fetch
   useEffect(() => {
     if (isAuthenticated) {
-      //fetchStatistik();
       fetchFilterOptions();
     }
   }, [isAuthenticated, fetchFilterOptions]);
-  //}, [isAuthenticated, fetchStatistik, fetchFilterOptions]);
 
   // Fetch data siswa ketika filter berubah
   useEffect(() => {
@@ -143,6 +146,10 @@ export default function HomePage() {
     }
   }, [isAuthenticated, fetchData]);
 
+  useEffect(() => {
+    setSelectedNispns([]);
+  }, [currentPage, perPage, debouncedNama, debouncedNispn, jenisKelamin, statusMondok, selectedDaerahSambungId, selectedKelasId, selectedKelompokId]);
+  
   const handleViewStudent = (nispn: string) => {
     router.push(`/siswa/${nispn}`)
   }
@@ -151,6 +158,48 @@ export default function HomePage() {
     setCurrentPage(page)
   }
 
+  const handleSelectRow = (nispn: string, isSelected: boolean) => {
+    setSelectedNispns(prev => 
+      isSelected ? [...prev, nispn] : prev.filter(id => id !== nispn)
+    );
+  };
+  
+  const handleSelectAll = (isSelected: boolean) => {
+    if (isSelected) {
+      const allNispnsOnPage = data?.data.map(s => s.nispn).filter(Boolean) as string[];
+      setSelectedNispns(allNispnsOnPage);
+    } else {
+      setSelectedNispns([]);
+    }
+  };
+
+  const isAllOnPageSelected = data?.data.length ? selectedNispns.length === data.data.length : false;
+
+  const handleBulkPrint = async (type: "cocard-depan" | "cocard-belakang") => {
+    if (selectedNispns.length === 0) return;
+
+    toast({ title: "Mempersiapkan data...", description: `Memuat data untuk ${selectedNispns.length} siswa.` });
+
+    try {
+        const studentPromises = selectedNispns.map(nispn =>
+            fetch(`https://tes.ppwb.my.id/api/siswa-ppwb?filter[nispn]=${nispn}`)
+                .then(res => res.json())
+                .then(result => result.data && result.data.length > 0 ? result.data[0] : null)
+        );
+
+        const studentsData = (await Promise.all(studentPromises)).filter(Boolean) as Siswa[];
+
+        if (studentsData.length > 0) {
+            generateBulkPrintDocument(studentsData, type);
+        } else {
+            throw new Error("Gagal mendapatkan data siswa terpilih.");
+        }
+
+    } catch (err: any) {
+        toast({ title: "Error", description: err.message || "Gagal memuat data untuk dicetak.", variant: "destructive" });
+    }
+  };
+  
   if (!isAuthenticated) return null
 
   return (
@@ -180,7 +229,7 @@ export default function HomePage() {
               <CardTitle className="text-primary-800 flex items-center gap-2"><Users className="h-5 w-5"/>Filter & Pencarian Siswa</CardTitle>
             </CardHeader>
             <CardContent className="p-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-end">
                 <div className="space-y-2">
                   <Label htmlFor="searchNama">Cari Nama</Label>
                   <Input id="searchNama" placeholder="Masukkan nama..." value={searchNama} onChange={(e) => setSearchNama(e.target.value)} />
@@ -256,17 +305,32 @@ export default function HomePage() {
                     placeholder="Pilih kelompok..."
                   />
                 </div>
-                <div className="space-y-2 mt-auto">
-                  <Button onClick={() => setIsExportModalOpen(true)}>
-                      <Download className="mr-2 h-4 w-4"/>
-                      Ekspor ke Excel
-                  </Button>
+                <div className="flex items-center gap-2">
+                    <Button onClick={() => setIsExportModalOpen(true)}>
+                        <Download className="mr-2 h-4 w-4"/>
+                        Ekspor
+                    </Button>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="outline" disabled={selectedNispns.length === 0}>
+                          Aksi ({selectedNispns.length})
+                          <ChevronDown className="ml-2 h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent>
+                        <DropdownMenuItem onSelect={() => handleBulkPrint('cocard-depan')}>
+                            Cetak Cocard Depan
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onSelect={() => handleBulkPrint('cocard-belakang')}>
+                            Cetak Cocard Belakang
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          {/* Loading State */}
           {loading && (
             <Card>
               <CardContent className="p-6">
@@ -285,7 +349,6 @@ export default function HomePage() {
             </Card>
           )}
 
-          {/* Error State */}
           {error && (
             <Card>
               <CardContent className="p-6 text-center">
@@ -315,6 +378,13 @@ export default function HomePage() {
                         <Table>
                           <TableHeader>
                             <TableRow>
+                              <TableHead className="w-[50px]">
+                                <Checkbox
+                                  checked={isAllOnPageSelected}
+                                  onCheckedChange={handleSelectAll}
+                                  aria-label="Select all rows on this page"
+                                />
+                              </TableHead>
                               <TableHead>Foto</TableHead>
                               <TableHead>NISPN</TableHead>
                               <TableHead>Nama Lengkap</TableHead>
@@ -329,6 +399,13 @@ export default function HomePage() {
                           <TableBody>
                             {data.data.map((siswa) => (
                               <TableRow key={siswa.nispn}>
+                                <TableCell>
+                                  <Checkbox
+                                    checked={selectedNispns.includes(siswa.nispn)}
+                                    onCheckedChange={(value) => handleSelectRow(siswa.nispn, !!value)}
+                                    aria-label={`Select row for ${siswa.nama}`}
+                                  />
+                                </TableCell>
                                 <TableCell>
                                   <div className="w-12 h-16 rounded-lg overflow-hidden bg-gray-100">
                                     <img
@@ -369,47 +446,52 @@ export default function HomePage() {
                       <Card
                         key={siswa.nispn}
                         className="cursor-pointer hover:shadow-md transition-shadow"
-                        onClick={() => handleViewStudent(siswa.nispn || "")}
                       >
-                        <CardContent className="p-4">
-                          <div className="flex items-start space-x-4">
-                            <div className="w-16 h-20 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
-                              <img
-                                src={siswa.foto_siswa || "/placeholder.svg?height=80&width=60"}
-                                alt={siswa.nama || "Student"}
-                                className="w-full h-full object-cover"
-                              />
+                         <CardContent className="p-4">
+                            <div className="flex items-start space-x-4">
+                               <Checkbox
+                                    checked={selectedNispns.includes(siswa.nispn)}
+                                    onCheckedChange={(value) => handleSelectRow(siswa.nispn, !!value)}
+                                    aria-label={`Select row for ${siswa.nama}`}
+                                    className="mt-1"
+                                />
+                               <div className="w-16 h-20 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0" onClick={() => handleViewStudent(siswa.nispn)}>
+                                 <img
+                                   src={siswa.foto_siswa || "/placeholder.svg?height=80&width=60"}
+                                   alt={siswa.nama || "Student"}
+                                   className="w-full h-full object-cover"
+                                 />
+                               </div>
+                               <div className="flex-1 space-y-2" onClick={() => handleViewStudent(siswa.nispn)}>
+                                <div className="flex items-center gap-2">
+                                  <h3 className="font-semibold text-lg">{siswa.nama || "-"}</h3>
+                                  <Badge
+                                    variant="outline"
+                                    className="rounded-full h-6 w-6 p-0 flex items-center justify-center"
+                                  >
+                                    {siswa.jenis_kelamin === "L" ? "L" : "P"}
+                                  </Badge>
+                                </div>
+                                <div className="space-y-1 text-sm text-gray-600">
+                                  <p>
+                                    <span className="font-medium">NISPN:</span> {siswa.nispn || "-"}
+                                  </p>
+                                  <p>
+                                    <span className="font-medium">Daerah:</span> {siswa.daerah_sambung || "-"}
+                                  </p>
+                                  <p>
+                                    <span className="font-medium">Kelas:</span> {siswa.kelas || "-"}
+                                  </p>
+                                   <p>
+                                    <span className="font-medium">Kelompok:</span> {siswa.kelompok || "-"}
+                                  </p>
+                                   <p>
+                                    <span className="font-medium">Status:</span> {siswa.status_mondok || "-"}
+                                  </p>
+                                </div>
+                               </div>
                             </div>
-                            <div className="flex-1 space-y-2">
-                              <div className="flex items-center gap-2">
-                                <h3 className="font-semibold text-lg">{siswa.nama || "-"}</h3>
-                                <Badge
-                                  variant="outline"
-                                  className="rounded-full h-6 w-6 p-0 flex items-center justify-center"
-                                >
-                                  {siswa.jenis_kelamin === "L" ? "L" : "P"}
-                                </Badge>
-                              </div>
-                              <div className="space-y-1 text-sm text-gray-600">
-                                <p>
-                                  <span className="font-medium">NISPN:</span> {siswa.nispn || "-"}
-                                </p>
-                                <p>
-                                  <span className="font-medium">Daerah:</span> {siswa.daerah_sambung || "-"}
-                                </p>
-                                <p>
-                                  <span className="font-medium">Kelas:</span> {siswa.kelas || "-"}
-                                </p>
-                                 <p>
-                                  <span className="font-medium">Kelompok:</span> {siswa.kelompok || "-"}
-                                </p>
-                                 <p>
-                                  <span className="font-medium">Status:</span> {siswa.status_mondok || "-"}
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-                        </CardContent>
+                         </CardContent>
                       </Card>
                     ))}
                   </div>
@@ -419,7 +501,7 @@ export default function HomePage() {
                       <CardContent className="p-4">
                         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                           <div className="text-sm text-gray-600">
-                            Menampilkan {data.from || 0} - {data.to || 0} dari {data.total} data
+                            Menampilkan {data.from || 0} - {data.to || 0} dari {data.total} data ({selectedNispns.length} terpilih)
                           </div>
 
                           <div className="flex items-center space-x-4 justify-between">
