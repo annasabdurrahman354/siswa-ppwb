@@ -1,4 +1,3 @@
-// annasabdurrahman354/siswa-ppwb/siswa-ppwb-1ab3aee5d39e63208c9cf1d36490c24de570cf47/app/siswa/[nispn]/page.tsx
 "use client"
 
 import { useEffect, useState, useCallback } from "react"
@@ -11,8 +10,8 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { useToast } from "@/hooks/use-toast"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import {
-  ArrowLeft, Camera, User, MapPin, GraduationCap, Home, Calendar, Users,
-  BadgeIcon as IdCard, Printer as PrinterIcon, DollarSign, FileText
+  ArrowLeft, Camera, User, MapPin, GraduationCap, Home, Calendar, Users, History,
+  BadgeIcon as IdCard, Printer as PrinterIcon, DollarSign, FileText, Briefcase, DoorOpen
 } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { generatePrintDocument } from "@/lib/print-utils"
@@ -22,6 +21,46 @@ import { formatRupiah } from "@/lib/terbilang"
 import { supabase } from "@/lib/supabase"
 import { PaymentTransaction } from "@/types/payment"
 import { Siswa } from "@/types/siswa"
+
+// Helper component for rendering history tables to keep the main component cleaner
+const RiwayatTable = ({ title, data, columns }: { title: string; data: any[]; columns: { key: keyof any; label: string }[] }) => {
+  if (!data || data.length === 0) {
+    return null; // Don't render anything if there's no data
+  }
+
+  return (
+    <div className="space-y-2">
+      <h4 className="text-md font-semibold text-purple-700">{title}</h4>
+      <div className="border rounded-lg overflow-hidden">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              {columns.map(col => <TableHead key={String(col.key)}>{col.label}</TableHead>)}
+              <TableHead>Tanggal Masuk</TableHead>
+              <TableHead>Status</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {data.map((item, index) => (
+              <TableRow key={index}>
+                {columns.map(col => <TableCell key={String(col.key)}>{item[col.key] || '-'}</TableCell>)}
+                <TableCell>
+                  {item.tanggal_masuk }
+                </TableCell>
+                <TableCell>
+                  <Badge color={item.status === 1 ? "purple" : "secondary"}>
+                    {item.status === 1 ? 'Aktif' : 'Tidak Aktif'}
+                  </Badge>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+    </div>
+  );
+};
+
 
 export default function SiswaDetailPage() {
   const { isAuthenticated } = useAuth();
@@ -84,7 +123,6 @@ export default function SiswaDetailPage() {
 
       if (error) throw error;
       
-      // Map the data to include category and option information
       const historyWithDetails = data.map(transaction => ({
         ...transaction,
         items: transaction.items.map((item: any) => ({
@@ -147,23 +185,25 @@ export default function SiswaDetailPage() {
     const printWindow = generatePrintDocument({ siswa, transaction }, "nota");
      if (printWindow) {
       printWindow.focus();
-      // Delay print to allow content to load, especially images if any are on nota
       setTimeout(() => {
         try {
           printWindow.print();
-          printWindow.onafterprint = () => {
-            // printWindow.close(); // Closing sometimes cancels printing
-          };
+          printWindow.onafterprint = () => {};
         } catch (e) {
           console.error("Error printing nota:", e);
           printWindow.alert("Gagal memulai proses print. Silakan coba print manual dari jendela nota (Ctrl/Cmd + P).");
         }
-      }, 1000); // Increased delay
+      }, 1000);
     } else {
       toast({title: "Gagal Cetak", description: "Tidak bisa membuka jendela cetak nota.", variant: "destructive"})
     }
   };
 
+  const hasHistory = siswa && (
+    (siswa.riwayat_ponpes && siswa.riwayat_ponpes.length > 0) ||
+    (siswa.riwayat_kelas && siswa.riwayat_kelas.length > 0) ||
+    (siswa.riwayat_kelompok && siswa.riwayat_kelompok.length > 0)
+  );
 
   if (!isAuthenticated) return null;
 
@@ -255,70 +295,45 @@ export default function SiswaDetailPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+                  
                     <div className="flex items-start gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-primary-100 flex items-center justify-center flex-shrink-0 mt-1">
-                        <User className="h-4 w-4 text-primary-600" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-primary-600">Nama Lengkap</p>
-                        <p className="text-lg font-semibold text-primary-800">{siswa.nama || "-"}</p>
-                      </div>
+                      <div className="w-8 h-8 rounded-lg bg-primary-100 flex items-center justify-center flex-shrink-0 mt-1"><User className="h-4 w-4 text-primary-600" /></div>
+                      <div><p className="text-sm font-medium text-primary-600">Nama Lengkap</p><p className="text-lg font-semibold text-primary-800">{siswa.nama || "-"}</p></div>
                     </div>
 
                     <div className="flex items-start gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-info-100 flex items-center justify-center flex-shrink-0 mt-1">
-                        <IdCard className="h-4 w-4 text-info-600" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-primary-600">NIS</p>
-                        <p className="text-lg text-primary-800">{siswa.nis || "-"}</p>
-                      </div>
+                      <div className="w-8 h-8 rounded-lg bg-primary-100 flex items-center justify-center flex-shrink-0 mt-1"><Users className="h-4 w-4 text-primary-600" /></div>
+                      <div><p className="text-sm font-medium text-primary-600">Jenis Kelamin</p><p className="text-lg text-primary-800">{siswa.jenis_kelamin || "-"}</p></div>
                     </div>
 
                     <div className="flex items-start gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-success-100 flex items-center justify-center flex-shrink-0 mt-1">
-                        <Calendar className="h-4 w-4 text-success-600" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-primary-600">Tempat Lahir</p>
-                        <p className="text-lg text-primary-800">{siswa.tempat_lahir || "-"}</p>
-                      </div>
+                      <div className="w-8 h-8 rounded-lg bg-primary-100 flex items-center justify-center flex-shrink-0 mt-1"><IdCard className="h-4 w-4 text-primary-600" /></div>
+                      <div><p className="text-sm font-medium text-primary-600">NIS</p><p className="text-lg text-primary-800">{siswa.nis || "-"}</p></div>
                     </div>
-                  </div>
-
-                  <div className="space-y-4">
+                  
                     <div className="flex items-start gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-warning-100 flex items-center justify-center flex-shrink-0 mt-1">
-                        <IdCard className="h-4 w-4 text-warning-600" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-primary-600">NISPN</p>
-                        <p className="text-lg text-primary-800">{siswa.nispn || "-"}</p>
-                      </div>
+                      <div className="w-8 h-8 rounded-lg bg-primary-100 flex items-center justify-center flex-shrink-0 mt-1"><IdCard className="h-4 w-4 text-primary-600" /></div>
+                      <div><p className="text-sm font-medium text-primary-600">NISPN</p><p className="text-lg text-primary-800">{siswa.nispn || "-"}</p></div>
                     </div>
-
+                  
+                 
+                  
                     <div className="flex items-start gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-primary-100 flex items-center justify-center flex-shrink-0 mt-1">
-                        <Calendar className="h-4 w-4 text-primary-600" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-primary-600">Umur</p>
-                        <p className="text-lg text-primary-800">{siswa.umur ? `${siswa.umur} tahun` : "-"}</p>
-                      </div>
+                      <div className="w-8 h-8 rounded-lg bg-primary-100 flex items-center justify-center flex-shrink-0 mt-1"><MapPin className="h-4 w-4 text-primary-600" /></div>
+                      <div><p className="text-sm font-medium text-primary-600">Tempat Lahir</p><p className="text-lg text-primary-800">{siswa.tempat_lahir || "-"}</p></div>
                     </div>
-
+                  
                     <div className="flex items-start gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-info-100 flex items-center justify-center flex-shrink-0 mt-1">
-                        <Calendar className="h-4 w-4 text-info-600" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-primary-600">Tanggal Lahir</p>
-                        <p className="text-lg text-primary-800">{siswa.tanggal_lahir || "-"}</p>
-                      </div>
+                      <div className="w-8 h-8 rounded-lg bg-primary-100 flex items-center justify-center flex-shrink-0 mt-1"><Calendar className="h-4 w-4 text-primary-600" /></div>
+                      <div><p className="text-sm font-medium text-primary-600">Tanggal Lahir</p><p className="text-lg text-primary-800">{siswa.tanggal_lahir || "-"}</p></div>
                     </div>
-                  </div>
+                  
+                    <div className="flex items-start gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-primary-100 flex items-center justify-center flex-shrink-0 mt-1"><Calendar className="h-4 w-4 text-primary-600" /></div>
+                      <div><p className="text-sm font-medium text-primary-600">Umur</p><p className="text-lg text-primary-800">{siswa.umur ? `${siswa.umur} tahun` : "-"}</p></div>
+                    </div>
+                  
                 </div>
               </CardContent>
             </Card>
@@ -326,30 +341,17 @@ export default function SiswaDetailPage() {
             {/* Family Information */}
             <Card className="border-primary-200 shadow-lg">
               <CardHeader className="bg-gradient-to-r from-success-50 to-success-100 border-b border-success-200">
-                <CardTitle className="flex items-center gap-2 text-success-800">
-                  <Users className="h-5 w-5" />
-                  Informasi Keluarga
-                </CardTitle>
+                <CardTitle className="flex items-center gap-2 text-success-800"><Users className="h-5 w-5" />Informasi Keluarga</CardTitle>
               </CardHeader>
               <CardContent className="p-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-success-100 flex items-center justify-center flex-shrink-0 mt-1">
-                      <User className="h-4 w-4 text-success-600" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-success-600">Nama Ayah</p>
-                      <p className="text-lg text-success-800">{siswa.nama_ayah || "-"}</p>
-                    </div>
+                    <div className="w-8 h-8 rounded-lg bg-success-100 flex items-center justify-center flex-shrink-0 mt-1"><User className="h-4 w-4 text-success-600" /></div>
+                    <div><p className="text-sm font-medium text-success-600">Nama Ayah</p><p className="text-lg text-success-800">{siswa.nama_ayah || "-"}</p></div>
                   </div>
                   <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-success-100 flex items-center justify-center flex-shrink-0 mt-1">
-                      <User className="h-4 w-4 text-success-600" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-success-600">Nama Ibu</p>
-                      <p className="text-lg text-success-800">{siswa.nama_ibu || "-"}</p>
-                    </div>
+                    <div className="w-8 h-8 rounded-lg bg-success-100 flex items-center justify-center flex-shrink-0 mt-1"><User className="h-4 w-4 text-success-600" /></div>
+                    <div><p className="text-sm font-medium text-success-600">Nama Ibu</p><p className="text-lg text-success-800">{siswa.nama_ibu || "-"}</p></div>
                   </div>
                 </div>
               </CardContent>
@@ -358,69 +360,37 @@ export default function SiswaDetailPage() {
             {/* Address Information */}
             <Card className="border-primary-200 shadow-lg">
               <CardHeader className="bg-gradient-to-r from-info-50 to-info-100 border-b border-info-200">
-                <CardTitle className="flex items-center gap-2 text-info-800">
-                  <MapPin className="h-5 w-5" />
-                  Informasi Alamat
-                </CardTitle>
+                <CardTitle className="flex items-center gap-2 text-info-800"><MapPin className="h-5 w-5" />Informasi Alamat</CardTitle>
               </CardHeader>
               <CardContent className="p-6 space-y-6">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="text-center p-3 bg-info-50 rounded-lg">
-                    <p className="text-xs font-medium text-info-600 mb-1">RT</p>
-                    <p className="text-lg font-bold text-info-800">{siswa.rt || "-"}</p>
-                  </div>
-                  <div className="text-center p-3 bg-info-50 rounded-lg">
-                    <p className="text-xs font-medium text-info-600 mb-1">RW</p>
-                    <p className="text-lg font-bold text-info-800">{siswa.rw || "-"}</p>
-                  </div>
-                  <div className="text-center p-3 bg-info-50 rounded-lg">
-                    <p className="text-xs font-medium text-info-600 mb-1">Desa/Kel</p>
-                    <p className="text-sm font-bold text-info-800">{siswa.desa_kel || "-"}</p>
-                  </div>
-                  <div className="text-center p-3 bg-info-50 rounded-lg">
-                    <p className="text-xs font-medium text-info-600 mb-1">Kode Pos</p>
-                    <p className="text-lg font-bold text-info-800">{siswa.kode_pos || "-"}</p>
-                  </div>
+                  <div className="text-center p-3 bg-info-50 rounded-lg"><p className="text-xs font-medium text-info-600 mb-1">RT</p><p className="text-lg font-bold text-info-800">{siswa.rt || "-"}</p></div>
+                  <div className="text-center p-3 bg-info-50 rounded-lg"><p className="text-xs font-medium text-info-600 mb-1">RW</p><p className="text-lg font-bold text-info-800">{siswa.rw || "-"}</p></div>
+                  <div className="text-center p-3 bg-info-50 rounded-lg"><p className="text-xs font-medium text-info-600 mb-1">Desa/Kel</p><p className="text-sm font-bold text-info-800">{siswa.desa_kel || "-"}</p></div>
+                  <div className="text-center p-3 bg-info-50 rounded-lg"><p className="text-xs font-medium text-info-600 mb-1">Kode Pos</p><p className="text-lg font-bold text-info-800">{siswa.kode_pos || "-"}</p></div>
                 </div>
-
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-info-100 flex items-center justify-center flex-shrink-0 mt-1">
-                      <MapPin className="h-4 w-4 text-info-600" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-info-600">Kecamatan</p>
-                      <p className="text-lg text-info-800">{siswa.kecamatan || "-"}</p>
-                    </div>
+                    <div className="w-8 h-8 rounded-lg bg-info-100 flex items-center justify-center flex-shrink-0 mt-1"><MapPin className="h-4 w-4 text-info-600" /></div>
+                    <div><p className="text-sm font-medium text-info-600">Kecamatan</p><p className="text-lg text-info-800">{siswa.kecamatan || "-"}</p></div>
                   </div>
                   <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-info-100 flex items-center justify-center flex-shrink-0 mt-1">
-                      <MapPin className="h-4 w-4 text-info-600" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-info-600">Kota/Kab</p>
-                      <p className="text-lg text-info-800">{siswa.kota_kab || "-"}</p>
-                    </div>
+                    <div className="w-8 h-8 rounded-lg bg-info-100 flex items-center justify-center flex-shrink-0 mt-1"><MapPin className="h-4 w-4 text-info-600" /></div>
+                    <div><p className="text-sm font-medium text-info-600">Kota/Kab</p><p className="text-lg text-info-800">{siswa.kota_kab || "-"}</p></div>
                   </div>
                   <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-info-100 flex items-center justify-center flex-shrink-0 mt-1">
-                      <MapPin className="h-4 w-4 text-info-600" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-info-600">Provinsi</p>
-                      <p className="text-lg text-info-800">{siswa.provinsi || "-"}</p>
-                    </div>
+                    <div className="w-8 h-8 rounded-lg bg-info-100 flex items-center justify-center flex-shrink-0 mt-1"><MapPin className="h-4 w-4 text-info-600" /></div>
+                    <div><p className="text-sm font-medium text-info-600">Provinsi</p><p className="text-lg text-info-800">{siswa.provinsi || "-"}</p></div>
                   </div>
                 </div>
-
                 <div className="flex items-start gap-3 bg-info-50 rounded-lg">
-                  <div className="w-8 h-8 rounded-lg bg-info-100 flex items-center justify-center flex-shrink-0 mt-1">
-                    <Home className="h-4 w-4 text-info-600" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-info-600 mb-1">Alamat Lengkap</p>
-                    <p className="text-base text-info-800 leading-relaxed">{siswa.alamat_lengkap || "-"}</p>
-                  </div>
+                  <div className="w-8 h-8 rounded-lg bg-info-100 flex items-center justify-center flex-shrink-0 mt-1"><Home className="h-4 w-4 text-info-600" /></div>
+                  <div><p className="text-sm font-medium text-info-600 mb-1">Alamat Lengkap</p><p className="text-base text-info-800 leading-relaxed">{siswa.alamat_lengkap || "-"}</p></div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="flex items-start gap-3"><div className="w-8 h-8 rounded-lg bg-info-100 flex items-center justify-center flex-shrink-0 mt-1"><Users className="h-4 w-4 text-info-600" /></div><div><p className="text-sm font-medium text-info-600">Kelompok Sambung</p><p className="text-lg text-info-800">{siswa.kelompok_sambung || "-"}</p></div></div>
+                  <div className="flex items-start gap-3"><div className="w-8 h-8 rounded-lg bg-info-100 flex items-center justify-center flex-shrink-0 mt-1"><MapPin className="h-4 w-4 text-info-600" /></div><div><p className="text-sm font-medium text-info-600">Desa Sambung</p><p className="text-lg text-info-800">{siswa.desa_sambung || "-"}</p></div></div>
+                  <div className="flex items-start gap-3"><div className="w-8 h-8 rounded-lg bg-info-100 flex items-center justify-center flex-shrink-0 mt-1"><MapPin className="h-4 w-4 text-info-600" /></div><div><p className="text-sm font-medium text-info-600">Daerah Sambung</p><p className="text-lg text-info-800">{siswa.daerah_sambung || "-"}</p></div></div>
                 </div>
               </CardContent>
             </Card>
@@ -428,54 +398,33 @@ export default function SiswaDetailPage() {
             {/* Education Information */}
             <Card className="border-primary-200 shadow-lg">
               <CardHeader className="bg-gradient-to-r from-warning-50 to-warning-100 border-b border-warning-200">
-                <CardTitle className="flex items-center gap-2 text-warning-800">
-                  <GraduationCap className="h-5 w-5" />
-                  Informasi Pendidikan
-                </CardTitle>
+                <CardTitle className="flex items-center gap-2 text-warning-800"><GraduationCap className="h-5 w-5" />Informasi Pendidikan</CardTitle>
               </CardHeader>
               <CardContent className="p-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-warning-100 flex items-center justify-center flex-shrink-0 mt-1">
-                      <GraduationCap className="h-4 w-4 text-warning-600" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-warning-600">Pendidikan</p>
-                      <p className="text-lg text-warning-800">{siswa.pendidikan || "-"}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-warning-100 flex items-center justify-center flex-shrink-0 mt-1">
-                      <Home className="h-4 w-4 text-warning-600" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-warning-600">Status Mondok</p>
-                      <Badge variant={siswa.status_mondok ? "default" : "secondary"} className="mt-1">
-                        {siswa.status_mondok || "Tidak Diketahui"}
-                      </Badge>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-warning-100 flex items-center justify-center flex-shrink-0 mt-1">
-                      <Users className="h-4 w-4 text-warning-600" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-warning-600">Kelompok Sambung</p>
-                      <p className="text-lg text-warning-800">{siswa.kelompok_sambung || "-"}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-warning-100 flex items-center justify-center flex-shrink-0 mt-1">
-                      <MapPin className="h-4 w-4 text-warning-600" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-warning-600">Daerah Sambung</p>
-                      <p className="text-lg text-warning-800">{siswa.daerah_sambung || "-"}</p>
-                    </div>
-                  </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+                  <div className="flex items-start gap-3"><div className="w-8 h-8 rounded-lg bg-warning-100 flex items-center justify-center flex-shrink-0 mt-1"><GraduationCap className="h-4 w-4 text-warning-600" /></div><div><p className="text-sm font-medium text-warning-600">Pendidikan</p><p className="text-lg text-warning-800">{siswa.pendidikan || "-"}</p></div></div>
+                  <div className="flex items-start gap-3"><div className="w-8 h-8 rounded-lg bg-warning-100 flex items-center justify-center flex-shrink-0 mt-1"><Briefcase className="h-4 w-4 text-warning-600" /></div><div><p className="text-sm font-medium text-warning-600">Jurusan</p><p className="text-lg text-warning-800">{siswa.jurusan || "-"}</p></div></div>
+                  <div className="flex items-start gap-3"><div className="w-8 h-8 rounded-lg bg-warning-100 flex items-center justify-center flex-shrink-0 mt-1"><DoorOpen className="h-4 w-4 text-warning-600" /></div><div><p className="text-sm font-medium text-warning-600">Kelas</p><p className="text-lg text-warning-800">{siswa.kelas || "-"}</p></div></div>
+                  <div className="flex items-start gap-3"><div className="w-8 h-8 rounded-lg bg-warning-100 flex items-center justify-center flex-shrink-0 mt-1"><Users className="h-4 w-4 text-warning-600" /></div><div><p className="text-sm font-medium text-warning-600">Kelompok</p><p className="text-lg text-warning-800">{siswa.kelompok || "-"}</p></div></div>
+                  <div className="flex items-start gap-3"><div className="w-8 h-8 rounded-lg bg-warning-100 flex items-center justify-center flex-shrink-0 mt-1"><Home className="h-4 w-4 text-warning-600" /></div><div><p className="text-sm font-medium text-warning-600">Status Mondok</p><Badge variant={siswa.status_mondok === 'Mondok' ? "default" : "secondary"} className="mt-1">{siswa.status_mondok || "Tidak Diketahui"}</Badge></div></div>
+                  <div className="flex items-start gap-3"><div className="w-8 h-8 rounded-lg bg-warning-100 flex items-center justify-center flex-shrink-0 mt-1"><MapPin className="h-4 w-4 text-warning-600" /></div><div><p className="text-sm font-medium text-warning-600">Daerah Kiriman</p><p className="text-lg text-warning-800">{siswa.daerah_kiriman || "-"}</p></div></div>
                 </div>
               </CardContent>
             </Card>
+
+            {/* History Information */}
+            {hasHistory && (
+              <Card className="border-primary-200 shadow-lg">
+                <CardHeader className="bg-gradient-to-r from-purple-50 to-purple-100 border-b border-purple-200">
+                  <CardTitle className="flex items-center gap-2 text-purple-800"><History className="h-5 w-5" />Riwayat Pendidikan & Kelompok</CardTitle>
+                </CardHeader>
+                <CardContent className="p-6 space-y-6">
+                  <RiwayatTable title="Riwayat Pondok Pesantren" data={siswa.riwayat_ponpes} columns={[{ key: 'nama', label: 'Nama Ponpes' }]} />
+                  <RiwayatTable title="Riwayat Kelas" data={siswa.riwayat_kelas} columns={[{ key: 'nama', label: 'Nama Kelas' }]} />
+                  <RiwayatTable title="Riwayat Kelompok" data={siswa.riwayat_kelompok} columns={[{ key: 'nama', label: 'Nama Kelompok' }]} />
+                </CardContent>
+              </Card>
+            )}
           </div>
         </div>
 
@@ -491,15 +440,9 @@ export default function SiswaDetailPage() {
           </CardHeader>
           <CardContent className="p-0">
             {loadingPayments ? (
-              <div className="p-6 space-y-2">
-                {[...Array(3)].map((_, i) => (
-                  <Skeleton key={i} className="h-16 w-full" />
-                ))}
-              </div>
+              <div className="p-6 space-y-2">{[...Array(3)].map((_, i) => (<Skeleton key={i} className="h-16 w-full" />))}</div>
             ) : paymentHistory.length === 0 ? (
-              <p className="p-6 text-center text-muted-foreground">
-                Belum ada riwayat pembayaran.
-              </p>
+              <p className="p-6 text-center text-muted-foreground">Belum ada riwayat pembayaran.</p>
             ) : (
               <>
                 {/* Desktop Table */}
@@ -518,117 +461,48 @@ export default function SiswaDetailPage() {
                     <TableBody>
                       {paymentHistory.map(tx => (
                         <TableRow key={tx.id}>
-                          <TableCell className="font-medium">
-                            {new Date(tx.transaction_date).toLocaleDateString('id-ID', {
-                              day: '2-digit',
-                              month: 'long',
-                              year: 'numeric'
-                            })}
-                          </TableCell>
+                          <TableCell className="font-medium">{new Date(tx.transaction_date).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' })}</TableCell>
                           <TableCell>
                             <div className="space-y-1">
                               {tx.items.map((item: any, index: number) => (
                                 <div key={item.id} className="text-sm">
-                                  <div className="font-medium text-primary-700">
-                                    {item.category_name}
-                                  </div>
-                                  <div className="text-muted-foreground text-xs">
-                                    {item.option_description} 
-                                    {item.quantity > 1 && ` × ${item.quantity}`}
-                                    <span className="ml-2 font-medium">
-                                      {formatRupiah(item.amount)}
-                                    </span>
-                                  </div>
+                                  <div className="font-medium text-primary-700">{item.category_name}</div>
+                                  <div className="text-muted-foreground text-xs">{item.option_description}{item.quantity > 1 && ` × ${item.quantity}`}<span className="ml-2 font-medium">{formatRupiah(item.amount)}</span></div>
                                 </div>
                               ))}
                             </div>
                           </TableCell>
-                          <TableCell className="font-semibold text-primary-700">
-                            {formatRupiah(tx.total_amount)}
-                          </TableCell>
+                          <TableCell className="font-semibold text-primary-700">{formatRupiah(tx.total_amount)}</TableCell>
                           <TableCell>{tx.processed_by_petugas}</TableCell>
-                          <TableCell className="max-w-[200px]">
-                            {tx.notes ? (
-                              <div className="truncate" title={tx.notes}>
-                                {tx.notes}
-                              </div>
-                            ) : (
-                              <span className="text-muted-foreground">-</span>
-                            )}
-                          </TableCell>
-                          <TableCell className="text-right">
-                            <Button 
-                              variant="outline" 
-                              size="sm" 
-                              onClick={() => handlePrintNota(tx)}
-                            >
-                              <FileText className="h-3.5 w-3.5 mr-1.5" />
-                              Print Nota
-                            </Button>
-                          </TableCell>
+                          <TableCell className="max-w-[200px]">{tx.notes ? (<div className="truncate" title={tx.notes}>{tx.notes}</div>) : (<span className="text-muted-foreground">-</span>)}</TableCell>
+                          <TableCell className="text-right"><Button variant="outline" size="sm" onClick={() => handlePrintNota(tx)}><FileText className="h-3.5 w-3.5 mr-1.5" />Print Nota</Button></TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
                   </Table>
                 </div>
-
                 {/* Mobile Cards */}
                 <div className="md:hidden p-4 space-y-3">
                   {paymentHistory.map(tx => (
                     <Card key={tx.id} className="border-blue-100">
                       <CardContent className="p-4">
                         <div className="flex justify-between items-start mb-3">
-                          <div className="font-semibold text-lg text-primary-700">
-                            {formatRupiah(tx.total_amount)}
-                          </div>
-                          <div className="text-xs text-muted-foreground">
-                            {new Date(tx.transaction_date).toLocaleDateString('id-ID', {
-                              day: '2-digit',
-                              month: 'short',
-                              year: 'numeric'
-                            })}
-                          </div>
+                          <div className="font-semibold text-lg text-primary-700">{formatRupiah(tx.total_amount)}</div>
+                          <div className="text-xs text-muted-foreground">{new Date(tx.transaction_date).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}</div>
                         </div>
-
-                        {/* Payment Items */}
                         <div className="space-y-2 mb-3">
                           {tx.items.map((item: any) => (
                             <div key={item.id} className="bg-gray-50 rounded-lg p-2">
-                              <div className="font-medium text-sm text-primary-700">
-                                {item.category_name}
-                              </div>
-                              <div className="text-xs text-muted-foreground">
-                                {item.option_description}
-                                {item.quantity > 1 && ` × ${item.quantity}`}
-                              </div>
-                              <div className="text-xs font-medium text-right">
-                                {formatRupiah(item.amount)}
-                              </div>
+                              <div className="font-medium text-sm text-primary-700">{item.category_name}</div>
+                              <div className="text-xs text-muted-foreground">{item.option_description}{item.quantity > 1 && ` × ${item.quantity}`}</div>
+                              <div className="text-xs font-medium text-right">{formatRupiah(item.amount)}</div>
                             </div>
                           ))}
                         </div>
-
-                        <div className="text-xs text-muted-foreground mb-2">
-                          <span className="font-medium">Petugas:</span> {tx.processed_by_petugas}
-                        </div>
-
-                        {tx.notes && (
-                          <div className="text-xs text-muted-foreground mb-3">
-                            <span className="font-medium">Catatan:</span> {tx.notes}
-                          </div>
-                        )}
+                        <div className="text-xs text-muted-foreground mb-2"><span className="font-medium">Petugas:</span> {tx.processed_by_petugas}</div>
+                        {tx.notes && (<div className="text-xs text-muted-foreground mb-3"><span className="font-medium">Catatan:</span> {tx.notes}</div>)}
                       </CardContent>
-                      <CardFooter className="p-3 pt-0">
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
-                          className="w-full" 
-                          onClick={() => handlePrintNota(tx)}
-                        >
-                          <FileText className="h-3.5 w-3.5 mr-1.5" />
-                          Print Nota
-                        </Button>
-                      </CardFooter>
+                      <CardFooter className="p-3 pt-0"><Button variant="outline" size="sm" className="w-full" onClick={() => handlePrintNota(tx)}><FileText className="h-3.5 w-3.5 mr-1.5" />Print Nota</Button></CardFooter>
                     </Card>
                   ))}
                 </div>
@@ -637,13 +511,12 @@ export default function SiswaDetailPage() {
           </CardContent>
         </Card>
       </div>
-
       <AddPaymentModal
         isOpen={isPaymentModalOpen}
         onOpenChange={setIsPaymentModalOpen}
         siswa={siswa}
         onPaymentSuccess={() => {
-            fetchPaymentHistory(); // Refresh payment history list
+            fetchPaymentHistory();
             toast({ title: "Sukses", description: "Pembayaran berhasil ditambahkan."});
         }}
       />

@@ -36,9 +36,14 @@ export interface Siswa {
   alamat_lengkap: string
   foto_siswa: string
   pendidikan: string
+  jurusan: string
   kelompok_sambung: string
+  desa_sambung: string
   daerah_sambung: string
   status_mondok: string
+  daerah_kiriman: string
+  kelas: string
+  kelompok: string
 
   // NEW FIELDS
   riwayat_ponpes: RiwayatPonpes[]
