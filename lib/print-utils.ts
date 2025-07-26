@@ -1035,7 +1035,7 @@ function generateNotaHTML(siswa: Siswa, transaction: PaymentTransaction): string
               <td>Nama</td>
               <td>:</td>
               <td>${siswa.nama}</td>
-              <td>Binti</td>
+              <td>Nama Ayah</td>
               <td>:</td>
               <td>${siswa.nama_ayah || '-'}</td>
             </tr>
