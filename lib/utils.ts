@@ -23,7 +23,7 @@ export const exportToExcel = (apiData: GroupedSiswaData, fileName: string) => {
 
     // Internal keys matching the Siswa interface
     const headers = [
-      'nispn', 'nis', 'nama', 'jenis_kelamin', 'kelas', 'kelompok', 'nik', 'kk', 'rfid', 'status_mondok',
+      'tanggal_mendaftar', 'nispn', 'nis', 'nama', 'jenis_kelamin', 'kelas', 'kelompok', 'tanggal_masuk_kelas', 'tanggal_masuk_kelompok', 'nik', 'kk', 'rfid', 'status_mondok', 
       'daerah_kiriman', 'daerah_sambung', 'desa_sambung', 'kelompok_sambung',
       'tempat_lahir', 'tanggal_lahir', 'umur', 'alamat_lengkap',
       'rt', 'rw', 'desa_kel', 'kecamatan', 'kota_kab', 'provinsi', 'kode_pos',
@@ -32,7 +32,7 @@ export const exportToExcel = (apiData: GroupedSiswaData, fileName: string) => {
 
     // User-friendly header row for Excel export
     const headerRow = [
-      'NISPN', 'NIS', 'Nama Lengkap', 'L/P', 'Kelas', 'Kelompok', 'NIK', 'KK', 'RFID', 'Status Mondok',
+      'Tanggal Mendaftar', 'NISPN', 'NIS', 'Nama Lengkap', 'L/P', 'Kelas', 'Kelompok', 'Tanggal Masuk Kelas', 'Tanggal Masuk Kelompok', 'NIK', 'KK', 'RFID', 'Status Mondok',
       'Daerah Kiriman', 'Daerah Sambung', 'Desa Sambung', 'Kelompok Sambung',
       'Tempat Lahir', 'Tanggal Lahir', 'Umur', 'Alamat Lengkap',
       'RT', 'RW', 'Desa/Kel', 'Kecamatan', 'Kota/Kab', 'Provinsi', 'Kode Pos',
