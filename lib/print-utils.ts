@@ -186,6 +186,7 @@ export function generatePrintDocument(
   }
 
   if (type == "cocard-depan") {
+    var namaSiswa = siswaData.nama.toUpperCase();
     printWindow.document.write(`
     <!DOCTYPE html>
     <html>
@@ -214,7 +215,7 @@ export function generatePrintDocument(
                                             </div> 
                                             <!-- Menambahkan kontainer untuk nama -->
                                             <div style="text-align: center; margin-top: 0px;">
-                                                <strong><span style="font-family: 'Times New Roman', Times, serif; font-size: 12px;">${siswaData.nama}</span></strong>
+                                                <strong><span style="font-family: 'Times New Roman', Times, serif; font-size: 12px;">${namaSiswa}</span></strong>
                                             </div>
                                             <!-- Menambahkan kontainer untuk NIS -->
                                             <div style="text-align: center; margin-top: 0px;">
