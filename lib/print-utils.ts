@@ -5,6 +5,7 @@ import { terbilang, formatRupiah } from "./terbilang"
 // Helper to generate HTML for the front of the cocard
 function generateCocardDepanHTML(siswa: Siswa, siteUrl: string): string {
   // A slightly improved layout for better alignment
+  var namaSiswa = siswa.nama.toUpperCase();
   return `
     <div style="width: 5.4cm; height: 8.5cm; page-break-after: always;">
       <table width="212" height="329" border="0" cellpadding="0" cellspacing="0">
@@ -20,7 +21,7 @@ function generateCocardDepanHTML(siswa: Siswa, siteUrl: string): string {
                                       </div> 
                                       <!-- Menambahkan kontainer untuk nama -->
                                       <div style="text-align: center; margin-top: 0px;">
-                                          <strong><span style="font-family: 'Times New Roman', Times, serif; font-size: 12px;">${siswa.nama}</span></strong>
+                                          <strong><span style="font-family: 'Times New Roman', Times, serif; font-size: 12px;">${namaSiswa}</span></strong>
                                       </div>
                                       <!-- Menambahkan kontainer untuk NIS -->
                                       <div style="text-align: center; margin-top: 0px;">
