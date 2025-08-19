@@ -20,6 +20,7 @@ import { Eye, ChevronLeft, ChevronRight, Users, Download, ChevronDown } from "lu
 import type { Siswa, SiswaPaginatedResponse } from "@/types/siswa"
 import { Combobox } from "@/components/ui/combobox"
 import { ExportModal } from "@/components/modals/export-modal"
+import { BulkUploadPhotosModal } from "@/components/modals/bulk-upload-photos-modal"
 import { generateBulkPrintDocument } from "@/lib/print-utils"
 
 // --- Tipe Data ---
@@ -43,6 +44,7 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+  const [isBulkUploadOpen, setIsBulkUploadOpen] = useState(false);
   const [selectedNispns, setSelectedNispns] = useState<string[]>([]);
 
 
@@ -219,6 +221,7 @@ export default function HomePage() {
                 selectedDaerahSambungId,
             }}
         />
+  <BulkUploadPhotosModal isOpen={isBulkUploadOpen} onClose={() => setIsBulkUploadOpen(false)} />
 
         <div className="flex flex-col space-y-4">
           <h2 className="text-3xl font-bold text-primary-800">Data Siswa PPWB</h2>
@@ -309,6 +312,9 @@ export default function HomePage() {
                     <Button onClick={() => setIsExportModalOpen(true)}>
                         <Download className="mr-2 h-4 w-4"/>
                         Ekspor
+                    </Button>
+                    <Button onClick={() => setIsBulkUploadOpen(true)} variant="outline">
+                      Upload Foto Massal
                     </Button>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
