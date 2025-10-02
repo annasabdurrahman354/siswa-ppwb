@@ -11,20 +11,25 @@ export function cn(...inputs: ClassValue[]) {
 // A more specific type for the export API response
 type GroupedSiswaData = Record<string, Siswa[]>;
 
-export const exportToExcel = (apiData: GroupedSiswaData, fileName: string) => {
+export const exportToExcel = (apiData: GroupedSiswaData, fileName: string, selectedFields: string[] = [], includeCustomColumn: boolean = false, customColumnName: string = "") => {
   // 1. Create a new workbook
   const workbook = XLSX.utils.book_new();
 
-  // 2. Iterate over each group in the data (e.g., "Kelas A", "Kelas B")
-  Object.keys(apiData).forEach(groupName => {
+  // 2. Sort groups first, then sort students by nama within each group
+  const sortedGroupNames = Object.keys(apiData).sort();
+
+  sortedGroupNames.forEach(groupName => {
     const studentData = apiData[groupName];
+
+    // Sort students by nama within each group
+    const sortedStudentData = [...studentData].sort((a, b) => a.nama.localeCompare(b.nama));
     
     // Sanitize sheet name (Excel has a 31 char limit and doesn't like certain chars)
     const sanitizedSheetName = groupName.substring(0, 31).replace(/[:\\/?*[\]]/g, "");
 
     // Internal keys matching the Siswa interface
-    const headers = [
-      'tanggal_mendaftar', 'nispn', 'nis', 'nama', 'jenis_kelamin', 'kelas', 'kelompok', 'tanggal_masuk_kelas', 'tanggal_masuk_kelompok', 'nik', 'kk', 'rfid', 'status_mondok', 
+    const allHeaders = [
+      'tanggal_mendaftar', 'nispn', 'nis', 'nama', 'jenis_kelamin', 'kelas', 'kelompok', 'tanggal_masuk_kelas', 'tanggal_masuk_kelompok', 'nik', 'kk', 'rfid', 'status_mondok',
       'daerah_kiriman', 'daerah_sambung', 'desa_sambung', 'kelompok_sambung',
       'tempat_lahir', 'tanggal_lahir', 'umur', 'alamat_lengkap',
       'rt', 'rw', 'desa_kel', 'kecamatan', 'kota_kab', 'provinsi', 'kode_pos',
@@ -32,7 +37,7 @@ export const exportToExcel = (apiData: GroupedSiswaData, fileName: string) => {
     ];
 
     // User-friendly header row for Excel export
-    const headerRow = [
+    const allHeaderRow = [
       'Tanggal Mendaftar', 'NISPN', 'NIS', 'Nama Lengkap', 'L/P', 'Kelas', 'Kelompok', 'Tanggal Masuk Kelas', 'Tanggal Masuk Kelompok', 'NIK', 'KK', 'RFID', 'Status Mondok',
       'Daerah Kiriman', 'Daerah Sambung', 'Desa Sambung', 'Kelompok Sambung',
       'Tempat Lahir', 'Tanggal Lahir', 'Umur', 'Alamat Lengkap',
@@ -40,10 +45,32 @@ export const exportToExcel = (apiData: GroupedSiswaData, fileName: string) => {
       'Nama Ayah', 'Nama Ibu', 'Foto Siswa', 'Pendidikan', 'Jurusan'
     ];
 
+    // Use selected fields or all fields if none selected
+    const fieldsToExport = selectedFields.length > 0 ? selectedFields : allHeaders;
+
+    // Create headers and headerRow based on selected fields
+    const headers = fieldsToExport.filter(field => allHeaders.includes(field));
+    const headerRow = headers.map(header => {
+      const index = allHeaders.indexOf(header);
+      return allHeaderRow[index];
+    });
+
+    // Add custom column if enabled
+    if (includeCustomColumn && customColumnName.trim()) {
+      headerRow.push(customColumnName.trim());
+    }
+
     // 4. Map the student data to an array of arrays, matching the header order.
-    const dataForSheet = studentData.map(siswa => 
-        headers.map(header => siswa[header as keyof Siswa] ?? '-')
-    );
+    const dataForSheet = sortedStudentData.map(siswa => {
+      const row = headers.map(header => siswa[header as keyof Siswa] ?? '-');
+
+      // Add custom column if enabled
+      if (includeCustomColumn && customColumnName.trim()) {
+        row.push(''); // Empty cell for custom column
+      }
+
+      return row;
+    });
 
     // 5. Create a worksheet, starting with the header row.
     const worksheet = XLSX.utils.aoa_to_sheet([headerRow, ...dataForSheet]);

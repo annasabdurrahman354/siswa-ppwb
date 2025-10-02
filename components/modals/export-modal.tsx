@@ -144,7 +144,7 @@ export function ExportModal({ isOpen, onClose, filterOptions, currentFilters }: 
       }
 
       if (exportType === "excel") {
-        exportToExcel(data, `export_by_${groupBy}`);
+        exportToExcel(data, `export_by_${groupBy}`, selectedFields, includeCustomColumn, customColumnName);
         toast({ title: "Ekspor Berhasil", description: "File Excel sedang diunduh." });
       } else if (exportType === "document") {
         if (documentFormat === "print") {
@@ -230,8 +230,8 @@ export function ExportModal({ isOpen, onClose, filterOptions, currentFilters }: 
             </Select>
           </div>
 
-          {/* Field Selection for Document Export */}
-          {exportType === "document" && (
+          {/* Field Selection for Document and Excel Export */}
+          {(exportType === "document" || exportType === "excel") && (
             <>
               <div className="grid grid-cols-4 items-start gap-4">
                 <Label className="text-right pt-2">Field yang Ditampilkan</Label>
