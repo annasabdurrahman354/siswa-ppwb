@@ -102,6 +102,7 @@ export function ExportModal({ isOpen, onClose, filterOptions, currentFilters }: 
                 <SelectValue placeholder="Pilih pengelompokan" />
               </SelectTrigger>
               <SelectContent>
+                <SelectItem value="none">Tidak Ada</SelectItem>
                 <SelectItem value="kelas">Berdasarkan Kelas</SelectItem>
                 <SelectItem value="kelompok">Berdasarkan Kelompok</SelectItem>
               </SelectContent>
