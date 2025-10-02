@@ -8,7 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Combobox } from "@/components/ui/combobox"
 import { useToast } from "@/hooks/use-toast"
-import { exportToExcel, exportToDocument } from "@/lib/utils" // Adjust path if needed
+import { exportToExcel, exportToDocument, exportToDocx } from "@/lib/utils" // Adjust path if needed
 import { Loader2, FileText } from "lucide-react"
 
 interface FilterOptions {
@@ -77,6 +77,7 @@ export function ExportModal({ isOpen, onClose, filterOptions, currentFilters }: 
   // State for the modal form
    const [groupBy, setGroupBy] = useState("none");
    const [exportType, setExportType] = useState("excel");
+   const [documentFormat, setDocumentFormat] = useState("print");
    const [selectedFields, setSelectedFields] = useState<string[]>([
      'nispn', 'nama', 'jenis_kelamin', 'kelas', 'kelompok', 'status_mondok', 'daerah_sambung'
    ]);
@@ -88,8 +89,13 @@ export function ExportModal({ isOpen, onClose, filterOptions, currentFilters }: 
    // Auto-set groupBy when export type changes
    const handleExportTypeChange = (newExportType: string) => {
      setExportType(newExportType);
-     if (newExportType === "document" && groupBy === "none") {
-       setGroupBy("kelas");
+     if (newExportType === "document") {
+       if (groupBy === "none") {
+         setGroupBy("kelas");
+       }
+       if (!documentFormat) {
+         setDocumentFormat("print");
+       }
      }
    };
 
@@ -140,9 +146,14 @@ export function ExportModal({ isOpen, onClose, filterOptions, currentFilters }: 
       if (exportType === "excel") {
         exportToExcel(data, `export_by_${groupBy}`);
         toast({ title: "Ekspor Berhasil", description: "File Excel sedang diunduh." });
-      } else {
-        exportToDocument(data, `export_by_${groupBy}`, selectedFields, groupBy, includeCustomColumn, customColumnName);
-        toast({ title: "Ekspor Berhasil", description: "Dokumen siap dicetak." });
+      } else if (exportType === "document") {
+        if (documentFormat === "print") {
+          exportToDocument(data, `export_by_${groupBy}`, selectedFields, groupBy, includeCustomColumn, customColumnName);
+          toast({ title: "Ekspor Berhasil", description: "Dokumen siap dicetak." });
+        } else if (documentFormat === "docx") {
+          await exportToDocx(data, `export_by_${groupBy}`, selectedFields, groupBy, includeCustomColumn, customColumnName);
+          toast({ title: "Ekspor Berhasil", description: "File Word sedang diunduh." });
+        }
       }
 
       onClose();
@@ -174,10 +185,26 @@ export function ExportModal({ isOpen, onClose, filterOptions, currentFilters }: 
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="excel">Excel</SelectItem>
-                <SelectItem value="document">Dokumen (Cetak)</SelectItem>
+                <SelectItem value="document">Dokumen</SelectItem>
               </SelectContent>
             </Select>
           </div>
+
+          {/* Document Format Selector (only show when document type is selected) */}
+          {exportType === "document" && (
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label className="text-right">Format Dokumen</Label>
+              <Select value={documentFormat} onValueChange={setDocumentFormat}>
+                <SelectTrigger className="col-span-3">
+                  <SelectValue placeholder="Pilih format dokumen" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="print">Print PDF</SelectItem>
+                  <SelectItem value="docx">DOCX (Word)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          )}
 
           {/* Group By Selector */}
           <div className="grid grid-cols-4 items-center gap-4">

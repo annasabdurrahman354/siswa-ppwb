@@ -1,6 +1,7 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 import * as XLSX from 'xlsx';
+import { Document, Packer, Paragraph, Table, TableCell, TableRow, WidthType, PageBreak, TextRun, AlignmentType, HeadingLevel } from 'docx';
 import type { Siswa } from '@/types/siswa';
 
 export function cn(...inputs: ClassValue[]) {
@@ -126,7 +127,9 @@ export const exportToDocument = (apiData: GroupedSiswaData, fileName: string, se
        @media print {
         @page {
           size: A4;
-          margin: 20mm;
+          padding-right: 10mm;
+          padding-left: 10mm;
+          padding-bottom: 10mm;
         }
         .page-break {
           page-break-before: always;
@@ -152,6 +155,7 @@ export const exportToDocument = (apiData: GroupedSiswaData, fileName: string, se
          font-size: 16px;
          font-weight: bold;
          margin-bottom: 10px;
+         margin-top: 10mm;
          text-align: center;
          background-color: #f5f5f5;
          padding: 10px;
@@ -222,4 +226,229 @@ export const exportToDocument = (apiData: GroupedSiswaData, fileName: string, se
 
  printWindow.document.write(htmlContent);
  printWindow.document.close();
+};
+
+// DOCX export function for Word documents
+export const exportToDocx = async (apiData: GroupedSiswaData, fileName: string, selectedFields: string[], groupBy: string, includeCustomColumn: boolean = false, customColumnName: string = "") => {
+ const children: any[] = [];
+
+ // Get field labels for display
+ const fieldLabels: Record<string, string> = {
+   'tanggal_mendaftar': 'Tanggal Mendaftar',
+   'nispn': 'NISPN',
+   'nis': 'NIS',
+   'nama': 'Nama Lengkap',
+   'jenis_kelamin': 'L/P',
+   'kelas': 'Kelas',
+   'kelompok': 'Kelompok',
+   'tanggal_masuk_kelas': 'Tanggal Masuk Kelas',
+   'tanggal_masuk_kelompok': 'Tanggal Masuk Kelompok',
+   'nik': 'NIK',
+   'kk': 'KK',
+   'rfid': 'RFID',
+   'status_mondok': 'Status Mondok',
+   'daerah_kiriman': 'Daerah Kiriman',
+   'daerah_sambung': 'Daerah Sambung',
+   'desa_sambung': 'Desa Sambung',
+   'kelompok_sambung': 'Kelompok Sambung',
+   'tempat_lahir': 'Tempat Lahir',
+   'tanggal_lahir': 'Tanggal Lahir',
+   'umur': 'Umur',
+   'alamat_lengkap': 'Alamat Lengkap',
+   'rt': 'RT',
+   'rw': 'RW',
+   'desa_kel': 'Desa/Kel',
+   'kecamatan': 'Kecamatan',
+   'kota_kab': 'Kota/Kab',
+   'provinsi': 'Provinsi',
+   'kode_pos': 'Kode Pos',
+   'nama_ayah': 'Nama Ayah',
+   'nama_ibu': 'Nama Ibu',
+   'foto_siswa': 'Foto Siswa',
+   'pendidikan': 'Pendidikan',
+   'jurusan': 'Jurusan'
+ };
+
+ const selectedFieldLabels = selectedFields.map(field => fieldLabels[field] || field);
+
+ // Add custom column to headers if enabled
+ const tableHeaders = [...selectedFieldLabels];
+ if (includeCustomColumn && customColumnName.trim()) {
+   tableHeaders.push(customColumnName.trim());
+ }
+
+ // Create document sections for each group
+ Object.keys(apiData).forEach((groupName, groupIndex) => {
+   const studentData = apiData[groupName];
+
+   // Add group title
+   children.push(
+     new Paragraph({
+       children: [new TextRun({ text: groupName, bold: true, size: 32 })],
+       heading: HeadingLevel.HEADING_1,
+       alignment: AlignmentType.CENTER,
+       spacing: { before: 200, after: 200 }
+     })
+   );
+
+   // Create table headers
+   const headerCells = [
+     new TableCell({
+       children: [new Paragraph({
+         children: [new TextRun({ text: "No", bold: true })],
+         alignment: AlignmentType.CENTER,
+         spacing: { before: 50, after: 50 }
+       })],
+       width: { size: 800, type: WidthType.DXA }, // Auto-fit width for "No" column
+       margins: {
+         top: 50,
+         bottom: 50,
+         left: 50,
+         right: 50,
+       }
+     }),
+     ...tableHeaders.map(header =>
+       new TableCell({
+         children: [new Paragraph({
+           children: [new TextRun({ text: header, bold: true })],
+           alignment: AlignmentType.CENTER,
+           spacing: { before: 50, after: 50 }
+         })],
+         width: { size: 2000, type: WidthType.DXA }, // Auto-fit width for data columns
+         margins: {
+           top: 50,
+           bottom: 50,
+           left: 50,
+           right: 50,
+         }
+       })
+     )
+   ];
+
+   // Create table rows
+   const rows = [
+     new TableRow({ children: headerCells }),
+     ...studentData.map((siswa, index) => {
+       const cells = [
+         new TableCell({
+           children: [new Paragraph({
+             children: [new TextRun({ text: (index + 1).toString() })],
+             alignment: AlignmentType.CENTER,
+             spacing: { before: 50, after: 50 }
+           })],
+           width: { size: 800, type: WidthType.DXA }, // Auto-fit width for "No" column
+           margins: {
+             top: 50,
+             bottom: 50,
+             left: 50,
+             right: 50,
+           }
+         })
+       ];
+
+       // Add data cells
+       selectedFields.forEach(field => {
+         const value = siswa[field as keyof Siswa] || '-';
+         let displayValue = value;
+
+         if (field === 'jenis_kelamin') {
+           displayValue = value === 'L' ? 'L' : value === 'P' ? 'P' : value;
+         }
+
+         cells.push(
+           new TableCell({
+             children: [new Paragraph({
+               children: [new TextRun({ text: String(displayValue) })],
+               spacing: { before: 50, after: 50 }
+             })],
+             width: { size: 2000, type: WidthType.DXA }, // Auto-fit width for data columns
+             margins: {
+               top: 50,
+               bottom: 50,
+               left: 50,
+               right: 50,
+             }
+           })
+         );
+       });
+
+       // Add custom column if enabled
+       if (includeCustomColumn && customColumnName.trim()) {
+         cells.push(
+           new TableCell({
+             children: [new Paragraph({
+               children: [new TextRun({ text: "" })],
+               spacing: { before: 50, after: 50 }
+             })],
+             width: { size: 2000, type: WidthType.DXA }, // Auto-fit width for custom column
+             margins: {
+               top: 50,
+               bottom: 50,
+               left: 50,
+               right: 50,
+             }
+           })
+         );
+       }
+
+       return new TableRow({ children: cells });
+     })
+   ];
+
+   // Add table
+   children.push(
+     new Table({
+       rows: rows,
+       width: {
+         size: 100,
+         type: WidthType.PERCENTAGE,
+       },
+       margins: {
+         top: 100,
+         bottom: 100,
+         left: 100,
+         right: 100,
+       }
+     })
+   );
+
+   // Add page break after each group (except the last one)
+   if (groupIndex < Object.keys(apiData).length - 1) {
+     children.push(new Paragraph({ children: [new TextRun({ text: "" })] }));
+   }
+ });
+
+ // Create document with A4 page size and 1cm margins
+ const doc = new Document({
+   sections: [{
+     properties: {
+       page: {
+         margin: {
+           top: 360, // 0.5cm in twentieths of a point
+           right: 360,
+           bottom: 360,
+           left: 360,
+         },
+         size: {
+           width: 12240, // F4/Folio width in twentieths of a point (8.5 inches)
+           height: 18720, // F4/Folio height in twentieths of a point (13 inches)
+         }
+       }
+     },
+     children: children
+   }]
+ });
+
+ // Generate and download the document
+ const buffer = await Packer.toBuffer(doc);
+ const blob = new Blob([new Uint8Array(buffer)], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+ const url = URL.createObjectURL(blob);
+
+ const link = document.createElement('a');
+ link.href = url;
+ link.download = `${fileName}.docx`;
+ document.body.appendChild(link);
+ link.click();
+ document.body.removeChild(link);
+ URL.revokeObjectURL(url);
 };
