@@ -441,7 +441,7 @@ export const exportToDocx = async (apiData: GroupedSiswaData, fileName: string, 
 
    // Add page break after each group (except the last one)
    if (groupIndex < Object.keys(apiData).length - 1) {
-     children.push(new Paragraph({ children: [new TextRun({ text: "" })] }));
+     children.push(new PageBreak());
    }
  });
 
