@@ -22,6 +22,7 @@ import { Combobox } from "@/components/ui/combobox"
 import { ExportModal } from "@/components/modals/export-modal"
 import { BulkUploadPhotosModal } from "@/components/modals/bulk-upload-photos-modal"
 import { generateBulkPrintDocument } from "@/lib/print-utils"
+import { API_BASE_URL } from "@/lib/config"
 
 // --- Tipe Data ---
 interface Kelas {
@@ -87,7 +88,7 @@ export default function HomePage() {
       if (selectedKelasId !== "all") params.append("id_kelas", selectedKelasId)
       if (selectedKelompokId !== "all") params.append("id_kelompok", selectedKelompokId)
 
-      const response = await fetch(`https://tes.ppwb.my.id/api/siswa-ppwb?${params.toString()}`)
+      const response = await fetch(`${API_BASE_URL}?${params.toString()}`)
       if (!response.ok) throw new Error("Gagal memuat data siswa")
       const result = await response.json()
       setData(result)
@@ -103,9 +104,9 @@ export default function HomePage() {
     setLoadingFilters(true);
     try {
       const [daerahRes, kelasRes, kelompokRes] = await Promise.all([
-        fetch('https://tes.ppwb.my.id/api/siswa-ppwb/daerah'),
-        fetch('https://tes.ppwb.my.id/api/siswa-ppwb/kelas'),
-        fetch('https://tes.ppwb.my.id/api/siswa-ppwb/kelompok'),
+        fetch(`${API_BASE_URL}/daerah`),
+        fetch(`${API_BASE_URL}/kelas`),
+        fetch(`${API_BASE_URL}/kelompok`),
       ]);
       if (!daerahRes.ok || !kelasRes.ok || !kelompokRes.ok) throw new Error('Gagal memuat data filter');
       
@@ -184,7 +185,7 @@ export default function HomePage() {
 
     try {
         const studentPromises = selectedNispns.map(nispn =>
-            fetch(`https://tes.ppwb.my.id/api/siswa-ppwb?filter[nispn]=${nispn}`)
+            fetch(`${API_BASE_URL}?filter[nispn]=${nispn}`)
                 .then(res => res.json())
                 .then(result => result.data && result.data.length > 0 ? result.data[0] : null)
         );

@@ -16,6 +16,7 @@ import Webcam from "react-webcam"
 import ReactCrop, { type PixelCrop, centerCrop, makeAspectCrop } from "react-image-crop"
 import imageCompression from "browser-image-compression"
 import "react-image-crop/dist/ReactCrop.css"
+import { API_BASE_URL } from "@/lib/config"
 
 export default function UpdatePhotoPage() {
   const { isAuthenticated } = useAuth()
@@ -203,7 +204,7 @@ export default function UpdatePhotoPage() {
       formData.append("nispn", nispn)
       formData.append("photo", compressedFile, "photo.jpg")
 
-      const uploadResponse = await fetch("https://tes.ppwb.my.id/api/siswa-ppwb/update-photo", {
+      const uploadResponse = await fetch(`${API_BASE_URL}/update-photo`, {
         method: "POST",
         body: formData,
       })

@@ -19,6 +19,7 @@ import { Badge } from "@/components/ui/badge"
 import { AddPaymentModal } from "@/components/payments/add-payment-modal"
 import { formatRupiah } from "@/lib/terbilang"
 import { supabase } from "@/lib/supabase"
+import { API_BASE_URL } from "@/lib/config"
 import { PaymentTransaction } from "@/types/payment"
 import { Siswa } from "@/types/siswa"
 
@@ -81,7 +82,7 @@ export default function SiswaDetailPage() {
     try {
       setLoading(true);
       setError(null);
-      const response = await fetch(`https://tes.ppwb.my.id/api/siswa-ppwb?filter[nispn]=${nispn}`);
+      const response = await fetch(`${API_BASE_URL}?filter[nispn]=${nispn}`);
       if (!response.ok) throw new Error("Gagal memuat data siswa dari API eksternal");
       const result = await response.json();
       if (result.data && result.data.length > 0) {

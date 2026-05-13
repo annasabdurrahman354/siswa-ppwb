@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
 import { useRouter } from "next/navigation"
+import { APP_PASSWORD } from "@/lib/config"
 
 interface AuthContextType {
   namaPetugas: string | null
@@ -39,7 +40,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const login = (nama: string, password: string): boolean => {
-    if (password === "db-ppwb") {
+    if (APP_PASSWORD && password === APP_PASSWORD) {
       const properCaseName = toProperCase(nama.trim())
       setNamaPetugas(properCaseName)
       setIsAuthenticated(true)
